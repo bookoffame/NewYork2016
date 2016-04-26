@@ -1,6 +1,6 @@
 {
     "@context": "http://iiif.io/api/presentation/2/context.json", 
-    "@id": "http://LOCALADDRESSGOESHERE”, 
+    "@id": "https://github.com/tabulafamae/MoMAprototype/blob/master/transcription.json”, 
     "@type": "sc:AnnotationList", 
     "resources": [
         {
