@@ -1,0 +1,18 @@
+{
+    "@context": "http://iiif.io/api/presentation/2/context.json", 
+    "@id": "http://LOCALADDRESSGOESHERE”, 
+    "@type": "sc:AnnotationList", 
+    "resources": [
+        {
+            "@id": "_:Ne657af8dc1964bd98b6a30e1856e03c5", //can this be cut?
+            "@type": "oa:Annotation", 
+            "motivation": "sc:Transcription71r”, 
+            "resource": {
+                "@id": "_:Na5af815edf7a4ff8aab98846bfef3af2", //can this be cut?
+                "@type": "cnt:ContentAsText", 
+                "format": "text/plain", 
+                "chars": "The Wife of Bathe Prologue \ Experience, though noon auctoritee \ Were in this world, were right ynogh to me \ To speke of wo that is in mariage; \ For, lordynges, sith I twelf yeer was of age, \ Thonked be God, that is eterne on lyve, \ Housbondes at chirche-dore I have had fyve- \ For I so ofte have ywedded bee- \ And alle were worthy men in hir degree. \ But me was toold, certeyn, nat longe agoon is, \ That sith that Crist ne wente nevere but onis \ To weddyng in the Cane of Galilee, \ That by the same ensample, taughte he me,", 
+                "language": "frm"
+            }, 
+            "on": "http://sr-svx-93.unifr.ch/loris/fmb%2Ffmb-cb-0048%2Ffmb-cb-0048_071r.jp2/400,2650,1820,1200/500,/0/default.jpg"
+        }, 
