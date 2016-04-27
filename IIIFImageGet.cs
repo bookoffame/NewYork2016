@@ -25,6 +25,10 @@ public class IIIFImageGet : MonoBehaviour {
 
 	}
 
+	public Texture currentTexture(){
+		return myRenderer.material.mainTexture;
+	}
+
 	public void changeAddress(string newAddress){
 		int remaining = 4;
 		int index = newAddress.Length - 1;
