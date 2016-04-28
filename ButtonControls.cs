@@ -5,9 +5,10 @@ using System.Collections;
 public class ButtonControls : MonoBehaviour {
 	public Button[] buttons;
 	public Image[] images;
-
 	private int selected;
 
+	public static ButtonControls current;
+	public const int ANNOTATION_TOOL = 1;
 	// Use this for initialization
 	void Start () {
 		selected = -1;
@@ -15,6 +16,7 @@ public class ButtonControls : MonoBehaviour {
 			buttons [i].image.color = Color.cyan;
 		for (int i = 0; i < images.Length; i++)
 			images [i].color = new Color (0.9f,0.9f,0.9f,1);
+		current = this;
 	}
 
 	public int getSelected(){

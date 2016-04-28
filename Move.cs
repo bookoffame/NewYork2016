@@ -14,24 +14,24 @@ public class Move : MonoBehaviour {
 
 	void Start()
 	{
-		data = new IIIFGetManifest ();
+		/*data = new IIIFGetManifest ();
 		data.download(manifestURL);
 		image.changeAddress(data.getPage (0));
 		image.UpdateImage ();
-		cover.material.mainTexture = image.currentTexture ();
+		cover.material.mainTexture = image.currentTexture ();*/
 		on = false;
 	}
 
 	void Update () {
 		if (on) {
 			myTransform.Translate (speed * Input.GetAxis ("Horizontal"), speed * Input.GetAxis ("Vertical"), speed * Input.GetAxis ("Forward"));
-			if (Input.GetKeyDown (KeyCode.M)) {
+			/*if (Input.GetKeyDown (KeyCode.M)) {
 				image.changeAddress (data.getNextPage ());
 				image.UpdateImage ();
 			} else if (Input.GetKeyDown (KeyCode.N)) {
 				image.changeAddress (data.getPrevPage ());
 				image.UpdateImage ();
-			}
+			}*/
 		}
 	}
 
