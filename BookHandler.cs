@@ -5,14 +5,7 @@ public class BookHandler : MonoBehaviour {
 
 	public Animator animator;
 	public Collider model;
-	bool grabbing;
-	float handPos;
 
-	// Use this for initialization
-	void Start () {
-		grabbing = false;
-		handPos = 0;
-	}
 
 	// Update is called once per frame
 	void Update () {

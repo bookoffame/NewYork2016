@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.IO;
 
 public class Annotation : MonoBehaviour {
 	public int pageWidth, pageHeight;
 	public Collider page;
+	public IIIFImageGet webdata;
 	public RectTransform selection;
 
 	private int sx, sy;
@@ -46,18 +48,60 @@ public class Annotation : MonoBehaviour {
 							h = -h;
 						}
 						annotating = false;
-						MakeAnnotation (pageWidth - sx, sy, w, h);
+						StartCoroutine (MakeAnnotation (pageWidth - sx, sy, w, h));
 					}
 				}
 			}
-		} else if (!Input.GetMouseButton (0))
+		} else if (!Input.GetMouseButton (0)) {
 			annotating = false;
+			selection.anchoredPosition = Vector2.zero;
+			selection.sizeDelta = Vector2.zero;
+		}
 	}
 
-	private void MakeAnnotation(int x, int y, int w, int h){
-		Debug.Log ("x: " + x.ToString ());
-		Debug.Log ("y: " + y.ToString ());
-		Debug.Log ("w: " + w.ToString ());
-		Debug.Log ("h: " + h.ToString ());
+	private IEnumerator MakeAnnotation(int x, int y, int w, int h){
+		yield return ButtonControls.current.PopUp ();
+		string anno = ButtonControls.current.getPopupText ();
+		if (!anno.Equals ("")) {
+			FileStream writter;
+			string toWrite = ",\n";
+			string filename = Application.persistentDataPath + "/anno.json";
+			Debug.Log (filename);
+			if (!File.Exists (filename)) {
+				toWrite = "\n";
+				File.WriteAllText (filename,
+					"{\n\t\"@context\": \"http://www.shared-canvas.org/ns/context.json\","
+					+ "\n\t\"@id\": \"" + filename + "\""
+					+ ",\n\t\"@type\": \"sc:AnnotationList\",\n\t\"resources\": [\n\t\n\t]\n}\n");
+			}
+			toWrite += "\t\t{\n";
+			toWrite += "\t\t\t\"id\": \"_:an" + System.DateTime.UtcNow.ToBinary().ToString () + "\",\n";
+			toWrite += "\t\t\t\"@type\": \"oa:Annotation\",\n";
+			toWrite += "\t\t\t\"resource\": {\n";
+			toWrite += "\t\t\t\t\"id\": \"_:an" + System.DateTime.UtcNow.ToBinary().ToString () + "\",\n";
+			toWrite += "\t\t\t\t\"@type\": \"cnt:ContentAsText\"\n";
+			toWrite += "\t\t\t\t\"format\": \"text/plain\",\n";
+			toWrite += "\t\t\t\t\"chars\": \"" + anno + "\",\n";
+			toWrite += "\t\t\t\t\"language\": \"en\",\n";
+			toWrite += "\t\t\t},\n";
+			toWrite += "\t\t\t\"on\": \"" + webdata.webAddress + "#xywh=" + x.ToString() + "," + y.ToString() 
+				+ "," + w.ToString() + "," + h.ToString() + "\"\n";
+			toWrite += "\t\t}";
+
+			writter = File.Open(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+			writter.Seek(0, SeekOrigin.End);
+			while (writter.ReadByte() != ']')
+				writter.Seek(-2, SeekOrigin.Current);
+			writter.Seek(-5, SeekOrigin.Current);
+			byte[] myBytes = System.Text.Encoding.Unicode.GetBytes (toWrite);
+			writter.Write(myBytes,0,myBytes.Length);
+
+			myBytes = System.Text.Encoding.Unicode.GetBytes ("\n\t]\n}\n");
+			writter.Write(myBytes,0,myBytes.Length);
+
+			writter.Close ();
+		}
+		selection.anchoredPosition = Vector2.zero;
+		selection.sizeDelta = Vector2.zero;
 	}
 }
