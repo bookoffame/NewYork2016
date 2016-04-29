@@ -6,7 +6,9 @@ public class Move : MonoBehaviour {
 	public Transform myTransform;
 	public float speed;
 	public IIIFImageGet image;
+	public Renderer cover;
 	public string manifestURL;
+
 	private IIIFGetManifest data;
 	private bool on;
 	// Update is called once per frame
@@ -17,6 +19,7 @@ public class Move : MonoBehaviour {
 		data.download(manifestURL);
 		image.changeAddress(data.getPage (0));
 		image.UpdateImage ();
+		cover.material.mainTexture = image.currentTexture ();
 		on = false;
 	}
 
