@@ -26,7 +26,6 @@ public class IIIFImageGet : MonoBehaviour {
 		GameObject newSprite = AddSprite(iiifImage.texture);
 		newSprite.transform.position = location.position;*/
 		myRenderer.material.mainTexture = iiifImage.texture;
-
 	}
 
 	public void UpdateAnnotations(){

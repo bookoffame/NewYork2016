@@ -22,25 +22,47 @@ public class Annotation : MonoBehaviour {
 		
 	}
 
-	public ArrayList GetAnnotations(string data, string url){
-		Regex regex = new Regex ("\"@type\": \"oa:Annotation\",(\\s|.)*?\"@type\": \"cnt:ContentAsText\"," +
-			"(\\s|.)*?\"chars\": \"([^\"]*?)\",(\\s|.)*?\"on\": \""
-			+ Regex.Escape(url) + "#xywh=(\\d*?),(\\d*?),(\\d*?),(\\d*?)\"");
-		MatchCollection matches = regex.Matches (data);
+	public ArrayList GetAnnotations (string data, string url)
+	{
+		data = data.Substring (1);
+		Regex regex = new Regex ("{(\\s|.)*?\"@type\": \"oa:Annotation\",(\\s|.)*?\"@type\": \"cnt:ContentAsText\"," +
+		              "(\\s|.)*?\"chars\": \"([^\"]*?)\",(\\s|.)*?\"on\": \""
+		              + Regex.Escape (url) + "#xywh=(\\d*?),(\\d*?),(\\d*?),(\\d*?)\"(\\s|.)*?}");
 		ArrayList list = new ArrayList ();
-		foreach (Match m in matches) {
-			AnnotationBox a;
-			a.contents = m.Groups [3].ToString();
-			a.x = (float)int.Parse(m.Groups [5].ToString())/pageWidth;
-			a.y = (float)int.Parse(m.Groups [6].ToString())/pageHeight;
-			a.w = (float)int.Parse(m.Groups [7].ToString())/pageWidth;
-			a.h = (float)int.Parse(m.Groups [8].ToString())/pageHeight;
-			list.Add (a);
+		foreach (string s in GetPair(data)) {
+			if (s.Equals (data))
+				continue;
+			MatchCollection matches = regex.Matches (s);
+			foreach (Match m in matches) {
+				AnnotationBox a;
+				a.contents = m.Groups [4].ToString ();
+				a.x = (float)int.Parse (m.Groups [6].ToString ()) / pageWidth;
+				a.y = (float)int.Parse (m.Groups [7].ToString ()) / pageHeight;
+				a.w = (float)int.Parse (m.Groups [8].ToString ()) / pageWidth;
+				a.h = (float)int.Parse (m.Groups [9].ToString ()) / pageHeight;
+				list.Add (a);
+			}
 		}
 		return list;
 
 	}
 
+	private IEnumerable GetPair(string s){
+		int count = 0;
+
+		ArrayList last = new ArrayList();
+		for (int i = 0; i < s.Length; i++) {
+			if (s [i] == '{') {
+				last.Add (i);
+				count++;
+			} else if (s [i] == '}' && count > 0) {
+				count--;
+				int start = (int)last [count];
+				last.RemoveAt (count);
+				yield return s.Substring (start, i - start + 1);
+			}
+		}
+	}
 	private void MarkAnnotation(){
 		RaycastHit hit;
 		Vector3 topLeftCorr = Camera.main.WorldToScreenPoint (topLeft.position);
@@ -134,7 +156,7 @@ public class Annotation : MonoBehaviour {
 			writter.Seek(0, SeekOrigin.End);
 			while (writter.ReadByte() != ']')
 				writter.Seek(-2, SeekOrigin.Current);
-			writter.Seek(-5, SeekOrigin.Current);
+			writter.Seek(-3, SeekOrigin.Current);
 			byte[] myBytes = System.Text.Encoding.ASCII.GetBytes (toWrite);
 			writter.Write(myBytes,0,myBytes.Length);
 
