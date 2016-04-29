@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.IO;
 
 public class IIIFImageGet : MonoBehaviour {
 	public Transform location;
@@ -10,11 +11,14 @@ public class IIIFImageGet : MonoBehaviour {
 	public int rotation = 0;
 	public string quality = "default";
 	public string format = ".jpg";
-	//public string myName;
-	public Renderer myRenderer;
 
-	// Use this for initialization
+	public Renderer myRenderer;
+	public Annotation annotation;
+	public AnnotationDrawer drawer;
+	private ArrayList annotations;
+
 	public void UpdateImage () {
+		UpdateAnnotations ();
 		string location = getAddress ();
 		WWW iiifImage = new WWW (location);
 		while (!iiifImage.isDone);
@@ -25,6 +29,11 @@ public class IIIFImageGet : MonoBehaviour {
 
 	}
 
+	public void UpdateAnnotations(){
+		if (File.Exists(annotation.LocalAnnotationFile()))
+			annotations = annotation.GetAnnotations (File.ReadAllText(annotation.LocalAnnotationFile()), webAddress);
+		drawer.UpdatesAnnotations (GetAnnotations ());
+	}
 	public Texture currentTexture(){
 		return myRenderer.material.mainTexture;
 	}
@@ -61,8 +70,16 @@ public class IIIFImageGet : MonoBehaviour {
 			location = location.Insert (location.Length,"!");
 		location = location.Insert (location.Length,rotation.ToString() + "/");
 		location = location.Insert (location.Length, quality + format);
-		Debug.Log (location);
 		return location;
+	}
+
+	public Annotation.AnnotationBox[] GetAnnotations(){
+		if (annotations == null)
+			annotations = new ArrayList ();
+		Annotation.AnnotationBox[] output = new Annotation.AnnotationBox[annotations.Count];
+		for (int i = 0; i < output.Length; i++)
+			output [i] = (Annotation.AnnotationBox)annotations [i];
+		return output;
 	}
 
 	/*

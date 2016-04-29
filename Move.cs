@@ -8,30 +8,31 @@ public class Move : MonoBehaviour {
 	public IIIFImageGet image;
 	public Renderer cover;
 	public string manifestURL;
+
 	private IIIFGetManifest data;
 	private bool on;
 	// Update is called once per frame
 
 	void Start()
 	{
-		/*data = new IIIFGetManifest ();
+		data = new IIIFGetManifest ();
 		data.download(manifestURL);
 		image.changeAddress(data.getPage (0));
 		image.UpdateImage ();
-		cover.material.mainTexture = image.currentTexture ();*/
+		cover.material.mainTexture = image.currentTexture ();
 		on = false;
 	}
 
 	void Update () {
 		if (on) {
 			myTransform.Translate (speed * Input.GetAxis ("Horizontal"), speed * Input.GetAxis ("Vertical"), speed * Input.GetAxis ("Forward"));
-			/*if (Input.GetKeyDown (KeyCode.M)) {
+			if (Input.GetKeyDown (KeyCode.M)) {
 				image.changeAddress (data.getNextPage ());
 				image.UpdateImage ();
 			} else if (Input.GetKeyDown (KeyCode.N)) {
 				image.changeAddress (data.getPrevPage ());
 				image.UpdateImage ();
-			}*/
+			}
 		}
 	}
 
