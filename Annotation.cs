@@ -9,7 +9,7 @@ public class Annotation : MonoBehaviour {
 	public PageImages webdata;
 	public Transform topLeft, bottomRight;
 
-	private string webAddress;
+	public string webAddress;
 	private int sx, sy;
 	private int w, h;
 	private Vector2 originalStart, originalScreenStart;
