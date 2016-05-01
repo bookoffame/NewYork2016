@@ -7,6 +7,7 @@ public class HandOnPage : MonoBehaviour {
 	public PageImages pageImages;
 	public float pageWidth;
 	public bool isRight;
+	public Renderer[] others;
 
 	private float lastPos;
 	private bool released;
@@ -24,6 +25,15 @@ public class HandOnPage : MonoBehaviour {
 		    animator.SetFloat ("HandMovement", -pageWidth*(Input.mousePosition.x - lastPos)/Screen.width);
 		lastPos = Input.mousePosition.x;
 
+		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("MovePages")) {
+			if (animator.GetCurrentAnimatorStateInfo (0).normalizedTime < 0.7) {
+				foreach (Renderer r in others)
+					r.enabled = true;
+			} else {
+				foreach (Renderer r in others)
+					r.enabled = false;
+			}
+		}
 		if (hand && Input.GetMouseButtonDown (0) &&
 		    animator.GetCurrentAnimatorStateInfo (0).IsName ("Default")) {
 			if (page.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit, 1000)) {

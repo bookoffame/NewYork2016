@@ -14,12 +14,15 @@ public class PageImages : MonoBehaviour {
 	private ArrayList annotations;
 	private IIIFGetManifest data;
 	private int curr;
+	private bool loadingRight, loadingLeft;
 
 	// Use this for initialization
 	void Start () {
 		annotations = new ArrayList ();
 		data = new IIIFGetManifest ();
 		data.download(manifestURL);
+		loadingRight = true;
+		loadingLeft = false;
 		StartCoroutine(init ());
 	}
 
@@ -32,10 +35,14 @@ public class PageImages : MonoBehaviour {
 		if (File.Exists(annotation[1].LocalAnnotationFile()))
 			annotations = annotation[1].GetAnnotations (File.ReadAllText(annotation[0].LocalAnnotationFile()), annotation[1].webAddress);
 		drawers[1].UpdatesAnnotations (GetAnnotations(1));
+		loadingRight = false;
 	}
 
 	public IEnumerator TurnPageLeft(){
+		yield return new WaitWhile (() => loadingLeft);
+		loadingLeft = true;
 		for (int i = 0; i < 4; i++) {
+			pages [i].enabled = true;
 			pages[i].material.mainTexture = pages[i + 2].material.mainTexture;
 		}
 		curr++;
@@ -44,10 +51,14 @@ public class PageImages : MonoBehaviour {
 		UpdateAnnotations ();
 		yield return StartCoroutine(InitPage (4, curr*6 + 1));
 		yield return StartCoroutine(InitPage (5, curr*6 + 2));
+		loadingLeft = false;
 	}
 
 	public IEnumerator TurnPageRight(){
+		yield return new WaitWhile (() => loadingRight);
+		loadingRight = true;
 		for (int i = 5; i > 1; i--) {
+			pages [i].enabled = true;
 			pages[i].material.mainTexture = pages[i - 2].material.mainTexture;
 		}
 		curr--;
@@ -56,6 +67,7 @@ public class PageImages : MonoBehaviour {
 		UpdateAnnotations ();
 		yield return StartCoroutine(InitPage (0, curr*6 - 2));
 		yield return StartCoroutine(InitPage (1, curr*6 - 1));
+		loadingRight = false;
 	}
 
 	public void UpdateAnnotations(){
@@ -78,8 +90,14 @@ public class PageImages : MonoBehaviour {
 
 	private IEnumerator InitPage(int page, int pageNum)
 	{
-		iiifImage.changeAddress(data.getPage (pageNum));
-		yield return StartCoroutine(iiifImage.UpdateImage ());
-		pages[page].material.mainTexture = iiifImage.texture;
+		if (pageNum < 0) {
+			pages [page].enabled = false;
+		} else 
+		{
+			iiifImage.changeAddress (data.getPage (pageNum));
+			yield return StartCoroutine (iiifImage.UpdateImage ());
+			pages [page].material.mainTexture = iiifImage.texture;
+			pages [page].enabled = true;
+		}
 	}
 }
