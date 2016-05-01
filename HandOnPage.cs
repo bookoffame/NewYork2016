@@ -18,12 +18,13 @@ public class HandOnPage : MonoBehaviour {
 	}
 	// Update is called once per frame
 	void Update () {
+		bool hand = ButtonControls.current.getSelected () == ButtonControls.HAND_TOOL;
 		RaycastHit hit;
-		if (!released)
+		if (!hand || !released)
 		    animator.SetFloat ("HandMovement", -pageWidth*(Input.mousePosition.x - lastPos)/Screen.width);
 		lastPos = Input.mousePosition.x;
 
-		if (Input.GetMouseButtonDown (0) &&
+		if (hand && Input.GetMouseButtonDown (0) &&
 		    animator.GetCurrentAnimatorStateInfo (0).IsName ("Default")) {
 			if (page.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit, 1000)) {
 				animator.SetTrigger ("Grabbed");

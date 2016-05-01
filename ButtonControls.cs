@@ -14,6 +14,7 @@ public class ButtonControls : MonoBehaviour {
 
 	public static ButtonControls current;
 	public const int ANNOTATION_TOOL = 1;
+	public const int HAND_TOOL = 2;
 	public const int READER_TOOL = 4;
 	// Use this for initialization
 	void Start () {
