@@ -7,6 +7,7 @@ public class CameraSwitch : MonoBehaviour {
 	public Move book;
 	public Camera playerCam;
 	public Camera bookCam;
+	public GameObject canvas;
 	// Use this for initialization
 
 	void Start () {
@@ -14,6 +15,7 @@ public class CameraSwitch : MonoBehaviour {
 		bookCam.enabled = false;
 		player.ChangeControl (true);
 		book.setActivated (false);
+		canvas.SetActive (false);
 	}
 	
 	// Update is called once per frame
@@ -23,6 +25,7 @@ public class CameraSwitch : MonoBehaviour {
 			bookCam.enabled = !bookCam.enabled;
 			player.ChangeControl (playerCam.enabled);
 			book.setActivated (bookCam.enabled);
+			canvas.SetActive (bookCam.enabled);
 		}
 	}
 }

@@ -9,7 +9,6 @@ namespace AssemblyCSharp
 		private WebClient client;
 		private Regex regex;
 		private MatchCollection pages;
-		private int curr;
 
 		public IIIFGetManifest ()
 		{
@@ -22,27 +21,16 @@ namespace AssemblyCSharp
 		{
 			string manifest = client.DownloadString (url);
 			pages = regex.Matches (manifest);
-			curr = 0;
 		}
 
 		public string getPage(int index)
 		{
-			curr = index;
 			return pages [index].Groups [1].Value;
 		}
 
-		public string getNextPage()
-		{
-			curr++;
-			return pages [curr].Groups [1].Value;
+		public int getNumOfPages(){
+			return pages.Count;
 		}
-
-		public string getPrevPage()
-		{
-			curr--;
-			return pages [curr].Groups [1].Value;
-		}
-			
 	}
 }
 

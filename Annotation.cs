@@ -6,20 +6,33 @@ using System.IO;
 public class Annotation : MonoBehaviour {
 	public int pageWidth, pageHeight;
 	public Collider page;
-	public IIIFImageGet webdata;
-	public RectTransform selection;
+	public PageImages webdata;
 	public Transform topLeft, bottomRight;
 
+	private string webAddress;
 	private int sx, sy;
 	private int w, h;
 	private Vector2 originalStart, originalScreenStart;
 	private bool annotating;
+	private AnnotationBox anno;
+	private Texture2D texture;
+
+	void Start()
+	{
+		texture = new Texture2D(1,1);
+		texture.SetPixel(1,1, new Color(1.0f,1.0f,0.0f,0.5f));
+		texture.Apply();
+	}
 
 	void Update () {
 		
 		if (ButtonControls.current.getSelected () == ButtonControls.ANNOTATION_TOOL)
 			MarkAnnotation ();
 		
+	}
+
+	public void UpdateWebAddress(string newAddress){
+		webAddress = newAddress;
 	}
 
 	public ArrayList GetAnnotations (string data, string url)
@@ -67,37 +80,42 @@ public class Annotation : MonoBehaviour {
 		RaycastHit hit;
 		Vector3 topLeftCorr = Camera.main.WorldToScreenPoint (topLeft.position);
 		Vector3 bottomRightCorr = Camera.main.WorldToScreenPoint (bottomRight.position);
+
 		topLeftCorr.y = Screen.height - topLeftCorr.y;
 		bottomRightCorr.y = Screen.height - bottomRightCorr.y;
+
 		float myWidth = bottomRightCorr.x - topLeftCorr.x;
 		float myHeight = bottomRightCorr.y - topLeftCorr.y;
+
 		if (page.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit, 1000)) {
 			Vector3 hitPoint = Input.mousePosition;
 			hitPoint.y = Screen.height - hitPoint.y;
 			if (Input.GetMouseButtonDown (0)) {
 				annotating = true;
+
 				sx = (int)(pageWidth * ((hitPoint.x - topLeftCorr.x)/myWidth));
 				sy = (int)(pageHeight * ((hitPoint.y - topLeftCorr.y)/myHeight));
-				originalStart = Camera.main.WorldToScreenPoint (hit.point);
-				originalScreenStart = originalStart;
-				originalScreenStart.y = Screen.height - originalScreenStart.y;
-				selection.anchoredPosition = originalStart;
+
+				anno.x = (hitPoint.x - topLeftCorr.x) / myWidth;
+				anno.y = (hitPoint.y - topLeftCorr.y) / myHeight;
+				anno.w = 0;
+				anno.h = 0;
+
 			} else if (Input.GetMouseButton (0)) {
 				w = (int)(pageWidth * ((hitPoint.x - topLeftCorr.x)/myWidth)) - sx;
 				h = (int)(pageHeight * ((hitPoint.y - topLeftCorr.y)/myHeight)) - sy;
-				Vector3 sizeDelta = hitPoint - (Vector3)originalScreenStart;
-				Vector2 newStart = selection.anchoredPosition;
-				sizeDelta.y = -sizeDelta.y;
-				if (sizeDelta.x < 0) {
-					newStart.x = originalStart.x + sizeDelta.x;
-					sizeDelta.x = -sizeDelta.x;
+
+				anno.w = (float)w/pageWidth;
+				anno.h =(float)h/pageHeight;
+				if (anno.w < 0) {
+					anno.x = (float)sx/pageWidth + anno.w;
+					anno.w = -anno.w;
 				}
-				if (sizeDelta.y < 0) {
-					newStart.y = originalStart.y + sizeDelta.y;
-					sizeDelta.y = -sizeDelta.y;
+				if (anno.h < 0) {
+					anno.y = (float)sy/pageHeight + anno.h;
+					anno.h = -anno.h;
 				}
-				selection.anchoredPosition = newStart;
-				selection.sizeDelta = sizeDelta;
+					
 			} else if (Input.GetMouseButtonUp (0)) {
 				if (annotating) {
 					if (w < 0) {
@@ -115,8 +133,6 @@ public class Annotation : MonoBehaviour {
 		}
 		if (!Input.GetMouseButton (0)) {
 			annotating = false;
-			selection.anchoredPosition = Vector2.zero;
-			selection.sizeDelta = Vector2.zero;
 		}
 	}
 	public string LocalAnnotationFile(){
@@ -148,7 +164,7 @@ public class Annotation : MonoBehaviour {
 			toWrite += "\t\t\t\t\"chars\": \"" + anno + "\",\n";
 			toWrite += "\t\t\t\t\"language\": \"en\",\n";
 			toWrite += "\t\t\t},\n";
-			toWrite += "\t\t\t\"on\": \"" + webdata.webAddress + "#xywh=" + x.ToString() + "," + y.ToString() 
+			toWrite += "\t\t\t\"on\": \"" + webAddress + "#xywh=" + x.ToString() + "," + y.ToString() 
 				+ "," + w.ToString() + "," + h.ToString() + "\"\n";
 			toWrite += "\t\t}";
 
@@ -165,9 +181,25 @@ public class Annotation : MonoBehaviour {
 
 			writter.Close ();
 		}
-		selection.anchoredPosition = Vector2.zero;
-		selection.sizeDelta = Vector2.zero;
 		webdata.UpdateAnnotations ();
+	}
+
+	void OnGUI(){
+		if (annotating) {
+			Vector3 myTopLeft = Camera.main.WorldToScreenPoint (topLeft.position);
+			Vector3 myBottomRight = Camera.main.WorldToScreenPoint (bottomRight.position);
+			myTopLeft.y = Screen.height - myTopLeft.y;
+			myBottomRight.y = Screen.height - myBottomRight.y;
+			float myWidth = myBottomRight.x - myTopLeft.x;
+			float myHeight = myBottomRight.y - myTopLeft.y;
+			Rect pos = new Rect (
+				          myTopLeft.x + myWidth * anno.x,
+				          myTopLeft.y + myHeight * anno.y,
+				          myWidth * anno.w,
+				          myHeight * anno.h);
+
+			GUI.DrawTexture (pos, texture);
+		}
 	}
 
 	public struct AnnotationBox
