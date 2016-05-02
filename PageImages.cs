@@ -28,9 +28,9 @@ public class PageImages : MonoBehaviour {
 
 	private IEnumerator init()
 	{
-		for (int i = 3; i < 6; i++)
-			yield return StartCoroutine(InitPage (i, i - 3));
-		curr = 0;
+		for (int i = 0; i < 6; i++)
+			yield return StartCoroutine(InitPage (i, i + 146 - 3));
+		curr = 73;
 		annotation [1].UpdateWebAddress (iiifImage.removeTail(data.getPage(0)));
 		if (File.Exists(annotation[1].LocalAnnotationFile()))
 			annotations = annotation[1].GetAnnotations (File.ReadAllText(annotation[0].LocalAnnotationFile()), annotation[1].webAddress);
@@ -49,8 +49,8 @@ public class PageImages : MonoBehaviour {
 		annotation [0].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2 - 1)));
 		annotation [1].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2)));
 		UpdateAnnotations ();
-		yield return StartCoroutine(InitPage (4, curr*6 + 1));
-		yield return StartCoroutine(InitPage (5, curr*6 + 2));
+		yield return StartCoroutine(InitPage (4, curr*2 + 1));
+		yield return StartCoroutine(InitPage (5, curr*2 + 2));
 		loadingLeft = false;
 	}
 
@@ -65,8 +65,8 @@ public class PageImages : MonoBehaviour {
 		annotation [0].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2 - 1)));
 		annotation [1].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2)));
 		UpdateAnnotations ();
-		yield return StartCoroutine(InitPage (0, curr*6 - 2));
-		yield return StartCoroutine(InitPage (1, curr*6 - 1));
+		yield return StartCoroutine(InitPage (0, curr*2 - 2));
+		yield return StartCoroutine(InitPage (1, curr*2 - 1));
 		loadingRight = false;
 	}
 
@@ -94,6 +94,11 @@ public class PageImages : MonoBehaviour {
 			pages [page].enabled = false;
 		} else 
 		{
+			if (pageNum % 2 == 1) {
+				iiifImage.cropOffsetX = 175;
+			} else {
+				iiifImage.cropOffsetX = 60;
+			}
 			iiifImage.changeAddress (data.getPage (pageNum));
 			yield return StartCoroutine (iiifImage.UpdateImage ());
 			pages [page].material.mainTexture = iiifImage.texture;
