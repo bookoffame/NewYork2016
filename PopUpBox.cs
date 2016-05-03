@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class PopUpBox : MonoBehaviour {
-	public Text enteredText;
+	public InputField input;
 	private string myText;
 	private bool done;
 
@@ -18,7 +18,7 @@ public class PopUpBox : MonoBehaviour {
 	}
 
 	public void Submit(){
-		myText = enteredText.text;
+		myText = input.text;
 		done = true;
 	}
 
@@ -29,7 +29,7 @@ public class PopUpBox : MonoBehaviour {
 
 	public void reset(){
 		done = false;
-		enteredText.text = "";
+		input.text = "";
 	}
 
 

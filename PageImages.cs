@@ -7,6 +7,7 @@ public class PageImages : MonoBehaviour {
 	public Renderer[] pages;
 	public IIIFImageGet iiifImage;
 	public string manifestURL;
+	public Texture2D loadingTexture;
 
 	public Annotation[] annotation;
 	public AnnotationDrawer[] drawers;
@@ -28,13 +29,19 @@ public class PageImages : MonoBehaviour {
 
 	private IEnumerator init()
 	{
+		for (int i = 0; i < 6; i++) {
+			pages [i].enabled = true;
+			pages [i].material.mainTexture = loadingTexture;
+		}
 		for (int i = 0; i < 6; i++)
 			yield return StartCoroutine(InitPage (i, i + 146 - 3));
 		curr = 73;
 		annotation [1].UpdateWebAddress (iiifImage.removeTail(data.getPage(0)));
 		if (File.Exists(annotation[1].LocalAnnotationFile()))
 			annotations = annotation[1].GetAnnotations (File.ReadAllText(annotation[0].LocalAnnotationFile()), annotation[1].webAddress);
-		drawers[1].UpdatesAnnotations (GetAnnotations(1));
+		annotation [0].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2 - 1)));
+		annotation [1].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2)));
+		UpdateAnnotations ();
 		loadingRight = false;
 	}
 
@@ -49,6 +56,8 @@ public class PageImages : MonoBehaviour {
 		annotation [0].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2 - 1)));
 		annotation [1].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2)));
 		UpdateAnnotations ();
+		pages [4].material.mainTexture = loadingTexture;
+		pages [5].material.mainTexture = loadingTexture;
 		yield return StartCoroutine(InitPage (4, curr*2 + 1));
 		yield return StartCoroutine(InitPage (5, curr*2 + 2));
 		loadingLeft = false;
@@ -65,8 +74,10 @@ public class PageImages : MonoBehaviour {
 		annotation [0].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2 - 1)));
 		annotation [1].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2)));
 		UpdateAnnotations ();
-		yield return StartCoroutine(InitPage (0, curr*2 - 2));
-		yield return StartCoroutine(InitPage (1, curr*2 - 1));
+		pages [0].material.mainTexture = loadingTexture;
+		pages [1].material.mainTexture = loadingTexture;
+		yield return StartCoroutine(InitPage (0, curr*2 - 1));
+		yield return StartCoroutine(InitPage (1, curr*2 - 2));
 		loadingRight = false;
 	}
 
@@ -76,7 +87,7 @@ public class PageImages : MonoBehaviour {
 			    drawers [i].UpdatesAnnotations (GetAnnotations (i));
 		    }
 		else
-			drawers [1].UpdatesAnnotations (GetAnnotations (1));
+			drawers [0].UpdatesAnnotations (GetAnnotations (0));
 	}
 
 	public Annotation.AnnotationBox[] GetAnnotations(int which){

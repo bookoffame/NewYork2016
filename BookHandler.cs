@@ -4,6 +4,7 @@ using System.Collections;
 public class BookHandler : MonoBehaviour {
 
 	public Animator animator;
+	public GameObject pages;
 	public Collider model;
 
 
@@ -23,6 +24,10 @@ public class BookHandler : MonoBehaviour {
 			}
 		}
 
+		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("OpenState") &&
+			animator.GetCurrentAnimatorStateInfo (0).normalizedTime > 0.999) {
+			pages.SetActive (true);
+		}
 
 	}
 }
