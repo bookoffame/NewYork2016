@@ -33,9 +33,9 @@ public class PageImages : MonoBehaviour {
 			pages [i].enabled = true;
 			pages [i].material.mainTexture = loadingTexture;
 		}
-		for (int i = 0; i < 6; i++)
-			yield return StartCoroutine(InitPage (i, i + 146 - 3));
 		curr = 73;
+		for (int i = 0; i < 6; i++)
+			yield return StartCoroutine(InitPage (i));
 		annotation [1].UpdateWebAddress (iiifImage.removeTail(data.getPage(0)));
 		if (File.Exists(annotation[1].LocalAnnotationFile()))
 			annotations = annotation[1].GetAnnotations (File.ReadAllText(annotation[0].LocalAnnotationFile()), annotation[1].webAddress);
@@ -58,8 +58,8 @@ public class PageImages : MonoBehaviour {
 		UpdateAnnotations ();
 		pages [4].material.mainTexture = loadingTexture;
 		pages [5].material.mainTexture = loadingTexture;
-		yield return StartCoroutine(InitPage (4, curr*2 + 1));
-		yield return StartCoroutine(InitPage (5, curr*2 + 2));
+		yield return StartCoroutine(InitPage (4));
+		yield return StartCoroutine(InitPage (5));
 		loadingLeft = false;
 	}
 
@@ -76,9 +76,16 @@ public class PageImages : MonoBehaviour {
 		UpdateAnnotations ();
 		pages [0].material.mainTexture = loadingTexture;
 		pages [1].material.mainTexture = loadingTexture;
-		yield return StartCoroutine(InitPage (0, curr*2 - 1));
-		yield return StartCoroutine(InitPage (1, curr*2 - 2));
+		yield return StartCoroutine(InitPage (0));
+		yield return StartCoroutine(InitPage (1));
 		loadingRight = false;
+	}
+
+	public void ShowAnnotations(bool isShowing){
+		foreach (AnnotationDrawer d in drawers) {
+			d.ShowAnnotations (isShowing);
+			d.enabled = isShowing;
+		}
 	}
 
 	public void UpdateAnnotations(){
@@ -99,8 +106,9 @@ public class PageImages : MonoBehaviour {
 		return output;
 	}
 
-	private IEnumerator InitPage(int page, int pageNum)
+	private IEnumerator InitPage(int page)
 	{
+		int pageNum = curr * 2 - 3 + page;
 		if (pageNum < 0) {
 			pages [page].enabled = false;
 		} else 

@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Text.RegularExpressions;
+using System.Net;
 
 public class ButtonControls : MonoBehaviour {
 	public Button[] buttons;
@@ -8,14 +10,19 @@ public class ButtonControls : MonoBehaviour {
 	public PopUpBox popup;
 	public Move bookCam;
 	public CameraSwitch switcher;
+	public PageImages presenter;
+	public GameObject tweetBox;
+	public Text tweetText;
 
 	private int selected;
 	private string popupText;
+	private Regex tweetRegex;
 
 	public static ButtonControls current;
 	public const int ANNOTATION_TOOL = 1;
 	public const int HAND_TOOL = 2;
 	public const int READER_TOOL = 4;
+	public const int SELECTION_TOOL = 6;
 	// Use this for initialization
 	void Start () {
 		selected = -1;
@@ -24,6 +31,7 @@ public class ButtonControls : MonoBehaviour {
 		for (int i = 0; i < images.Length; i++)
 			images [i].color = new Color (0.9f,0.9f,0.9f,1);
 		current = this;
+		tweetRegex = new Regex ("<div class=\"js-tweet-text-container\">\\s*?<p class=\"TweetTextSize TweetTextSize--16px js-tweet-text tweet-text\" lang=\"en\" data-aria-label-part=\"0\">(.*?)<\\/p>\\s*?<\\/div>");
 	}
 
 	public IEnumerator PopUp(){
@@ -51,6 +59,8 @@ public class ButtonControls : MonoBehaviour {
 	public void changeSelected(int newSelected){
 		clearLast ();
 		selected = newSelected;
+		if (newSelected == READER_TOOL)
+			presenter.ShowAnnotations (true);
 		buttons [selected].image.color = Color.green;
 		images [selected].color = new Color (1,1,1,1);
 		buttons [selected].interactable = false;
@@ -61,8 +71,22 @@ public class ButtonControls : MonoBehaviour {
 		selected = -1;
 	}
 
+	public void ShowLatestTweet(){
+		WebClient client = new WebClient ();
+		string data = client.DownloadString ("https://twitter.com/TabulaFamae");
+		MatchCollection tweets = tweetRegex.Matches (data);
+		tweetText.text = tweets[0].Groups[1].Value;
+		tweetBox.SetActive (true);
+	}
+
+	public void HideTweetBox(){
+		tweetBox.SetActive (false);
+	}
+
 	private void clearLast()
 	{
+		if (selected == READER_TOOL)
+			presenter.ShowAnnotations (false);
 		if (selected != -1) {
 			buttons [selected].image.color = Color.cyan;
 			images [selected].color = new Color (0.9f,0.9f,0.9f,1);

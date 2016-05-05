@@ -11,6 +11,7 @@ public class AnnotationDrawer : MonoBehaviour {
 	private Annotation.AnnotationBox[] boxes;
 	private RectTransform[] annotations;
 	private Texture2D texture;
+	private bool isShowing;
 
 	void Start()
 	{
@@ -19,6 +20,7 @@ public class AnnotationDrawer : MonoBehaviour {
 		texture.Apply();
 		boxes = new Annotation.AnnotationBox[0];
 		annotations = new RectTransform [0];
+		isShowing = false;
 	}
 
 	public void UpdatesAnnotations(Annotation.AnnotationBox[] annos){
@@ -32,6 +34,14 @@ public class AnnotationDrawer : MonoBehaviour {
 			o.SetAsFirstSibling ();
 			annotations[i] = o.GetComponent<RectTransform> ();
 			o.GetComponentInChildren<Text>().text = annos[i].contents;
+			o.gameObject.SetActive (isShowing);
+		}
+	}
+
+	public void ShowAnnotations(bool isShowing){
+		this.isShowing = isShowing;
+		foreach (Transform o in annotations) {
+			o.gameObject.SetActive (isShowing);
 		}
 	}
 
