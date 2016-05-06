@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.IO;
 using AssemblyCSharp;
@@ -11,6 +12,7 @@ public class PageImages : MonoBehaviour {
 
 	public Annotation[] annotation;
 	public AnnotationDrawer[] drawers;
+	public Text pageDisplay;
 
 	private ArrayList annotations;
 	private IIIFGetManifest data;
@@ -42,6 +44,7 @@ public class PageImages : MonoBehaviour {
 		annotation [0].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2 - 1)));
 		annotation [1].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2)));
 		UpdateAnnotations ();
+		UpdatePageDisplay ();
 		loadingRight = false;
 	}
 
@@ -58,6 +61,7 @@ public class PageImages : MonoBehaviour {
 		UpdateAnnotations ();
 		pages [4].material.mainTexture = loadingTexture;
 		pages [5].material.mainTexture = loadingTexture;
+		UpdatePageDisplay ();
 		yield return StartCoroutine(InitPage (4));
 		yield return StartCoroutine(InitPage (5));
 		loadingLeft = false;
@@ -76,6 +80,7 @@ public class PageImages : MonoBehaviour {
 		UpdateAnnotations ();
 		pages [0].material.mainTexture = loadingTexture;
 		pages [1].material.mainTexture = loadingTexture;
+		UpdatePageDisplay ();
 		yield return StartCoroutine(InitPage (0));
 		yield return StartCoroutine(InitPage (1));
 		loadingRight = false;
@@ -123,5 +128,9 @@ public class PageImages : MonoBehaviour {
 			pages [page].material.mainTexture = iiifImage.texture;
 			pages [page].enabled = true;
 		}
+	}
+
+	private void UpdatePageDisplay(){
+		pageDisplay.text = (curr - 3).ToString () + "v : " + (curr - 2).ToString () + "r";
 	}
 }

@@ -5,9 +5,10 @@ public class UIPopUp : MonoBehaviour {
 	public float hideY, showY;
 	public float triggerPos;
 	public RectTransform pos;
+	public bool hideAbove;
 	// Update is called once per frame
 	void Update () {
-		if ((Screen.height - Input.mousePosition.y) / Screen.height < triggerPos)
+		if (((Screen.height - Input.mousePosition.y) / Screen.height < triggerPos) ^ hideAbove)
 			pos.localPosition = new Vector3(pos.localPosition.x, Mathf.Lerp(pos.localPosition.y ,hideY, 0.1f), pos.localPosition.z);
 		else
 			pos.localPosition = new Vector3(pos.localPosition.x, Mathf.Lerp(pos.localPosition.y ,showY, 0.1f), pos.localPosition.z);

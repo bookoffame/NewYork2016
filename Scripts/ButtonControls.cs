@@ -18,6 +18,11 @@ public class ButtonControls : MonoBehaviour {
 	private string popupText;
 	private Regex tweetRegex;
 
+	public Image twitterBird;
+	public Sprite twitterBirdClosed;
+	public Sprite twitterBirdOpen;
+	public AudioSource twitterSound;
+
 	public static ButtonControls current;
 	public const int ANNOTATION_TOOL = 1;
 	public const int HAND_TOOL = 2;
@@ -75,11 +80,16 @@ public class ButtonControls : MonoBehaviour {
 		WebClient client = new WebClient ();
 		string data = client.DownloadString ("https://twitter.com/TabulaFamae");
 		MatchCollection tweets = tweetRegex.Matches (data);
+		twitterBird.sprite = twitterBirdOpen;
 		tweetText.text = tweets[0].Groups[1].Value;
 		tweetBox.SetActive (true);
+		twitterSound.Play ();
+		StartCoroutine (HideTweetBox ());
 	}
 
-	public void HideTweetBox(){
+	public IEnumerator HideTweetBox(){
+		yield return new WaitForSeconds (2);
+		twitterBird.sprite = twitterBirdClosed;
 		tweetBox.SetActive (false);
 	}
 

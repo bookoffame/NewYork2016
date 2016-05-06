@@ -12,9 +12,11 @@ public class IIIFImageGet : MonoBehaviour {
 	public string format = ".jpg";
 	public Texture2D texture;
 
+	private WWW iiifImage;
+
 	public IEnumerator UpdateImage () {
 		string location = getAddress ();
-		WWW iiifImage = new WWW (location);
+		iiifImage = new WWW (location);
 		yield return new WaitUntil(() => iiifImage.isDone);
 		texture = iiifImage.texture;
 	}
@@ -57,6 +59,13 @@ public class IIIFImageGet : MonoBehaviour {
 		location = location.Insert (location.Length,rotation.ToString() + "/");
 		location = location.Insert (location.Length, quality + format);
 		return location;
+	}
+
+	public float GetProgress(){
+		if (iiifImage == null)
+			return 1;
+		else
+			return iiifImage.progress;
 	}
 
 }
