@@ -24,8 +24,9 @@ public class AnnotationDrawer : MonoBehaviour {
 	}
 
 	public void UpdatesAnnotations(Annotation.AnnotationBox[] annos){
-		for (int i = 0; i < annotations.Length; i++)
-			Destroy (annotations [i].gameObject);
+		if (annotations != null)
+			for (int i = 0; i < annotations.Length; i++)
+				Destroy (annotations [i].gameObject);
 		boxes = annos;
 		annotations = new RectTransform[annos.Length];
 		for (int i = 0; i < annos.Length; i++) {

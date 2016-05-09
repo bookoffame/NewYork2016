@@ -18,6 +18,7 @@ public class ButtonControls : MonoBehaviour {
 	private string popupText;
 	private Regex tweetRegex;
 
+	public GameObject twitterBirdObj;
 	public Image twitterBird;
 	public Sprite twitterBirdClosed;
 	public Sprite twitterBirdOpen;
@@ -28,6 +29,8 @@ public class ButtonControls : MonoBehaviour {
 	public const int HAND_TOOL = 2;
 	public const int READER_TOOL = 4;
 	public const int SELECTION_TOOL = 6;
+	public const int LENS_TOOL = 8;
+	public const int TWITTER_TOOL = 9;
 	// Use this for initialization
 	void Start () {
 		selected = -1;
@@ -62,13 +65,17 @@ public class ButtonControls : MonoBehaviour {
 	}
 
 	public void changeSelected(int newSelected){
-		clearLast ();
-		selected = newSelected;
-		if (newSelected == READER_TOOL)
-			presenter.ShowAnnotations (true);
-		buttons [selected].image.color = Color.green;
-		images [selected].color = new Color (1,1,1,1);
-		buttons [selected].interactable = false;
+		if (newSelected == TWITTER_TOOL) {
+			twitterBirdObj.SetActive (!twitterBirdObj.activeInHierarchy);
+		} else {
+			clearLast ();
+			selected = newSelected;
+			if (newSelected == READER_TOOL)
+				presenter.ShowAnnotations (true);
+			buttons [selected].image.color = Color.green;
+			images [selected].color = new Color (1, 1, 1, 1);
+			buttons [selected].interactable = false;
+		}
 	}
 
 	public void clearSelected(){

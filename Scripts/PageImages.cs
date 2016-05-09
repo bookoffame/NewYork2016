@@ -12,12 +12,14 @@ public class PageImages : MonoBehaviour {
 
 	public Annotation[] annotation;
 	public AnnotationDrawer[] drawers;
+	public TranscriptionTool leftTrans, rightTrans;
 	public Text pageDisplay;
 
 	private ArrayList annotations;
 	private IIIFGetManifest data;
 	private int curr;
 	private bool loadingRight, loadingLeft;
+	private string transcription;
 
 	// Use this for initialization
 	void Start () {
@@ -38,14 +40,13 @@ public class PageImages : MonoBehaviour {
 		curr = 73;
 		for (int i = 0; i < 6; i++)
 			yield return StartCoroutine(InitPage (i));
-		annotation [1].UpdateWebAddress (iiifImage.removeTail(data.getPage(0)));
-		if (File.Exists(annotation[1].LocalAnnotationFile()))
-			annotations = annotation[1].GetAnnotations (File.ReadAllText(annotation[0].LocalAnnotationFile()), annotation[1].webAddress);
 		annotation [0].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2 - 1)));
 		annotation [1].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2)));
+		transcription = Resources.Load<TextAsset> ("Transcriptions/anno").text;
 		UpdateAnnotations ();
 		UpdatePageDisplay ();
 		loadingRight = false;
+		yield return new WaitUntil(()=>true);
 	}
 
 	public IEnumerator TurnPageLeft(){
@@ -100,6 +101,26 @@ public class PageImages : MonoBehaviour {
 		    }
 		else
 			drawers [0].UpdatesAnnotations (GetAnnotations (0));
+
+		Annotation.AnnotationBox empty;
+
+		empty.contents = "";
+		empty.x = 0;
+		empty.y = 0; 
+		empty.w = 0;
+		empty.h = 0;
+
+		annotations = annotation[0].GetAnnotations (transcription, annotation [0].webAddress);
+		if (annotations.Count > 0)
+			leftTrans.UpdatesTranscriptions ((Annotation.AnnotationBox)annotations [0]);
+		else
+			leftTrans.UpdatesTranscriptions (empty);
+		
+		annotations = annotation[1].GetAnnotations (transcription, annotation [1].webAddress);
+		if (annotations.Count > 0) 
+			rightTrans.UpdatesTranscriptions ((Annotation.AnnotationBox)annotations [0]);
+		else
+			rightTrans.UpdatesTranscriptions (empty);
 	}
 
 	public Annotation.AnnotationBox[] GetAnnotations(int which){
