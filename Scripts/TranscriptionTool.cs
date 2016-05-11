@@ -9,6 +9,7 @@ public class TranscriptionTool : MonoBehaviour {
 
 	private Annotation.AnnotationBox boxes;
 	private Texture2D texture;
+	private Text text;
 
 	void Start()
 	{
@@ -19,7 +20,8 @@ public class TranscriptionTool : MonoBehaviour {
 
 	public void UpdatesTranscriptions(Annotation.AnnotationBox annos){
 		boxes = annos;
-		annotations.gameObject.GetComponentInChildren<Text>().text = annos.contents;
+		text = annotations.gameObject.GetComponentInChildren<Text> ();
+		text.text = annos.contents;
 	}
 		
 	void Update(){
@@ -37,9 +39,10 @@ public class TranscriptionTool : MonoBehaviour {
 			myWidth * boxes.w,
 			myHeight * boxes.h);
 
-		Vector3 location = new Vector3 (pos.x*0.65f - Screen.width*0.35f, Screen.height*0.28f - pos.y*0.65f);
+		Vector3 location = new Vector3 (pos.x*0.875f - Screen.width*0.4535f, Screen.height*0.395f - pos.y*0.875f);
 
 		annotations.localPosition = location - annotations.parent.parent.localPosition;
-		annotations.sizeDelta = new Vector2 (pos.width, pos.height);
-		}
+		Vector2 size = new Vector2 (pos.width*1.35f, pos.height*1.35f);
+		annotations.sizeDelta = size;
 	}
+}

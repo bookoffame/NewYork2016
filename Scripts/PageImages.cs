@@ -26,8 +26,8 @@ public class PageImages : MonoBehaviour {
 		annotations = new ArrayList ();
 		data = new IIIFGetManifest ();
 		data.download(manifestURL);
+		loadingLeft = true;
 		loadingRight = true;
-		loadingLeft = false;
 		StartCoroutine(init ());
 	}
 
@@ -45,6 +45,7 @@ public class PageImages : MonoBehaviour {
 		transcription = Resources.Load<TextAsset> ("Transcriptions/anno").text;
 		UpdateAnnotations ();
 		UpdatePageDisplay ();
+		loadingLeft = false;
 		loadingRight = false;
 		yield return new WaitUntil(()=>true);
 	}
@@ -86,6 +87,9 @@ public class PageImages : MonoBehaviour {
 		yield return StartCoroutine(InitPage (1));
 		loadingRight = false;
 	}
+
+	public bool IsLoadingLeft(){return loadingLeft;}
+	public bool IsLoadingRight(){return loadingRight;}
 
 	public void ShowAnnotations(bool isShowing){
 		foreach (AnnotationDrawer d in drawers) {

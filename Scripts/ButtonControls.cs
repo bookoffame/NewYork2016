@@ -23,6 +23,7 @@ public class ButtonControls : MonoBehaviour {
 	public Sprite twitterBirdClosed;
 	public Sprite twitterBirdOpen;
 	public AudioSource twitterSound;
+	public DialogBox dialog;
 
 	public static ButtonControls current;
 	public const int ANNOTATION_TOOL = 1;
@@ -37,7 +38,7 @@ public class ButtonControls : MonoBehaviour {
 		for (int i = 0; i < buttons.Length; i++)
 			buttons [i].image.color = Color.cyan;
 		for (int i = 0; i < images.Length; i++)
-			images [i].color = new Color (0.9f,0.9f,0.9f,1);
+			images [i].color = new Color (0.3f,0.3f,0.3f,1);
 		current = this;
 		tweetRegex = new Regex ("<div class=\"js-tweet-text-container\">\\s*?<p class=\"TweetTextSize TweetTextSize--16px js-tweet-text tweet-text\" lang=\"en\" data-aria-label-part=\"0\">(.*?)<\\/p>\\s*?<\\/div>");
 	}
@@ -67,14 +68,54 @@ public class ButtonControls : MonoBehaviour {
 	public void changeSelected(int newSelected){
 		if (newSelected == TWITTER_TOOL) {
 			twitterBirdObj.SetActive (!twitterBirdObj.activeInHierarchy);
-		} else {
+			if (twitterBirdObj.activeInHierarchy)
+				images [newSelected].color = new Color (1, 1, 1, 1);
+			else
+				images [newSelected].color = new Color (0.3f, 0.3f, 0.3f, 1);
+		} else if (newSelected != 0 && newSelected != 3 && newSelected != 5 && newSelected != 6 && newSelected != 7) {
 			clearLast ();
-			selected = newSelected;
-			if (newSelected == READER_TOOL)
-				presenter.ShowAnnotations (true);
-			buttons [selected].image.color = Color.green;
-			images [selected].color = new Color (1, 1, 1, 1);
-			buttons [selected].interactable = false;
+			if (selected != newSelected) {
+				selected = newSelected;
+				if (newSelected == READER_TOOL)
+					presenter.ShowAnnotations (true);
+				buttons [selected].image.color = Color.green;
+				images [selected].color = new Color (1, 1, 1, 1);
+			} else {
+				selected = -1;
+			}
+		} else {
+			switch (newSelected) {
+			case 0://Blacklight
+				dialog.Show("Lighting Tool to be added soon!");
+				break;
+
+			case 3://Directory
+				dialog.Show("Directory to be added soon!");
+				break;
+
+			case 5://Zoom
+				dialog.Show("Zoom to be added soon!");
+				break;
+
+			case 6://Selection
+				dialog.Show("Annotation Selection to be added soon!");
+				break;
+
+			case 7://Help
+				dialog.Show("Controls:" +
+					"Left/Right Arrow Keys to move Left/Right.\n" +
+					"Up/Down Arrow Keys to move Up/Down.\n" +
+					"W/S to zoom In/Out.\n" +
+					"\n" +
+					"Buttons:\n" +
+					"Hand: Grab the pages with the cursor to turn to the next/previous page.\n" +
+					"Magnify Glass: See a transcription of the text.\n" +
+					"+: Select a region to add an annotation to the local annotation file.\n" +
+					"Note with \"A\": View local annotations.\n" +
+					"Bird: Clicking on it shows/hides a bird. Click the bird to get the latest Tweet from our account.\n" +
+					"?: Show this help dialog.");
+				break;
+			}
 		}
 	}
 
@@ -106,8 +147,7 @@ public class ButtonControls : MonoBehaviour {
 			presenter.ShowAnnotations (false);
 		if (selected != -1) {
 			buttons [selected].image.color = Color.cyan;
-			images [selected].color = new Color (0.9f,0.9f,0.9f,1);
-			buttons [selected].interactable = true;
+			images [selected].color = new Color (0.3f,0.3f,0.3f,1);
 		}
 	}
 }
