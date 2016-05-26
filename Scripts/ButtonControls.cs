@@ -18,6 +18,8 @@ public class ButtonControls : MonoBehaviour {
 	private string popupText;
 	private Regex tweetRegex;
 
+	public bool isSpotlight = false;
+
 	public GameObject twitterBirdObj;
 	public Image twitterBird;
 	public Sprite twitterBirdClosed;
@@ -26,10 +28,13 @@ public class ButtonControls : MonoBehaviour {
 	public DialogBox dialog;
 
 	public static ButtonControls current;
+	public const int LIGHT_TOOL = 0;
 	public const int ANNOTATION_TOOL = 1;
 	public const int HAND_TOOL = 2;
+	public const int DIRECTORY_TOOL = 3;
 	public const int READER_TOOL = 4;
 	public const int SELECTION_TOOL = 6;
+	public const int zoom_TOOL = 5;
 	public const int LENS_TOOL = 8;
 	public const int TWITTER_TOOL = 9;
 	// Use this for initialization
@@ -72,7 +77,15 @@ public class ButtonControls : MonoBehaviour {
 				images [newSelected].color = new Color (1, 1, 1, 1);
 			else
 				images [newSelected].color = new Color (0.3f, 0.3f, 0.3f, 1);
-		} else if (newSelected != 0 && newSelected != 3 && newSelected != 5 && newSelected != 7) {
+		} 
+		else if (newSelected == LIGHT_TOOL) {
+			isSpotlight = !isSpotlight;
+			if (isSpotlight)
+				images [newSelected].color = new Color (1, 1, 1, 1);
+			else
+				images [newSelected].color = new Color (0.3f, 0.3f, 0.3f, 1);
+		}
+		else if (newSelected != 3 && newSelected != 5 && newSelected != 7) {
 			clearLast ();
 			if (selected != newSelected) {
 				selected = newSelected;
@@ -85,20 +98,12 @@ public class ButtonControls : MonoBehaviour {
 			}
 		} else {
 			switch (newSelected) {
-			case 0://Blacklight
-				dialog.Show("Lighting Tool to be added soon!");
-				break;
-
 			case 3://Directory
 				dialog.Show("Directory to be added soon!");
 				break;
 
 			case 5://Zoom
 				dialog.Show("Zoom to be added soon!");
-				break;
-
-			case 6://Selection
-				dialog.Show("Annotation Selection to be added soon!");
 				break;
 
 			case 7://Help
