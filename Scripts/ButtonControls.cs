@@ -19,6 +19,7 @@ public class ButtonControls : MonoBehaviour {
 	private Regex tweetRegex;
 
 	public bool isSpotlight = false;
+	public MoveSpotlight spotlight;
 
 	public GameObject twitterBirdObj;
 	public Image twitterBird;
@@ -80,6 +81,7 @@ public class ButtonControls : MonoBehaviour {
 		} 
 		else if (newSelected == LIGHT_TOOL) {
 			isSpotlight = !isSpotlight;
+			spotlight.hideProperties (!isSpotlight);
 			if (isSpotlight)
 				images [newSelected].color = new Color (1, 1, 1, 1);
 			else
