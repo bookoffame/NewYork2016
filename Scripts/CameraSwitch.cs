@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityStandardAssets.Characters.FirstPerson;
 using System.Collections;
 
 public class CameraSwitch : MonoBehaviour {
@@ -8,6 +9,7 @@ public class CameraSwitch : MonoBehaviour {
 	public Camera playerCam;
 	public Camera bookCam;
 	public GameObject canvas;
+	public FirstPersonController fpc;
 	// Use this for initialization
 
 	void Start () {
@@ -26,6 +28,7 @@ public class CameraSwitch : MonoBehaviour {
 			player.ChangeControl (playerCam.enabled);
 			book.setActivated (bookCam.enabled);
 			canvas.SetActive (bookCam.enabled);
+			fpc.m_MouseLook.SetCursorLock (!fpc.m_MouseLook.lockCursor);
 		}
 	}
 }

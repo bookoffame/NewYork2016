@@ -3,17 +3,16 @@ using System.Collections;
 
 public class MovePlayer : MonoBehaviour {
 
-	public Rigidbody player;
-	bool inControl = true;
-	public float speed;
+	public MonoBehaviour moveScript;
+	public bool inControl;
 
-	// Update is called once per frame
-	void Update () {
-		if (inControl)
-		    player.velocity = new Vector3 (speed*Input.GetAxis("Horizontal"), player.velocity.y, speed*Input.GetAxis("Vertical"));
+	void Start()
+	{
+		moveScript.enabled = inControl;
 	}
 
 	public void ChangeControl(bool newControl){
+		moveScript.enabled = newControl;
 		inControl = newControl;
 	}
 }

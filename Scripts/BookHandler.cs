@@ -5,22 +5,18 @@ public class BookHandler : MonoBehaviour {
 
 	public Animator animator;
 	public GameObject pages;
-	public Collider model;
-
-
+	public Collider[] models;
+	public UIPopUp myUI;
 	// Update is called once per frame
 	void Update () {
 		RaycastHit hit;
-		if (model.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit, 1000)) {
-			if (Input.GetMouseButton(0))
-				animator.SetTrigger ("Grabbed");
-			animator.SetFloat ("HandPosition", hit.textureCoord.x);
-		} 
-		else {
-			if (animator.GetCurrentAnimatorStateInfo (0).IsName ("StartState")) {
-				animator.SetFloat ("HandPosition", 0);
-			} else {
-				animator.SetFloat ("HandPosition", 1);
+		bool isHit = false;
+		if (ButtonControls.current.getSelected() == ButtonControls.SELECTION_TOOL && myUI.IsShowing()) {
+			foreach (Collider model in models) {
+				if (!isHit && model.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit, 1000)) {
+					if (Input.GetMouseButtonDown(0))
+						animator.SetTrigger ("Grabbed");
+				}
 			}
 		}
 
@@ -29,5 +25,8 @@ public class BookHandler : MonoBehaviour {
 			pages.SetActive (true);
 		}
 
+		else if (animator.GetCurrentAnimatorStateInfo (0).IsName ("CloseState")) {
+			pages.SetActive (false);
+		}
 	}
 }

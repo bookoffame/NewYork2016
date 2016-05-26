@@ -72,7 +72,7 @@ public class ButtonControls : MonoBehaviour {
 				images [newSelected].color = new Color (1, 1, 1, 1);
 			else
 				images [newSelected].color = new Color (0.3f, 0.3f, 0.3f, 1);
-		} else if (newSelected != 0 && newSelected != 3 && newSelected != 5 && newSelected != 6 && newSelected != 7) {
+		} else if (newSelected != 0 && newSelected != 3 && newSelected != 5 && newSelected != 7) {
 			clearLast ();
 			if (selected != newSelected) {
 				selected = newSelected;

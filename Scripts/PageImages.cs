@@ -139,10 +139,8 @@ public class PageImages : MonoBehaviour {
 	private IEnumerator InitPage(int page)
 	{
 		int pageNum = curr * 2 - 3 + page;
-		if (pageNum < 0) {
-			pages [page].enabled = false;
-		} else 
-		{
+		if (pageNum > 0 && pageNum < data.getNumOfPages ()) {
+			pages [page].enabled = true;
 			if (pageNum % 2 == 1) {
 				iiifImage.cropOffsetX = 175;
 			} else {
@@ -151,7 +149,8 @@ public class PageImages : MonoBehaviour {
 			iiifImage.changeAddress (data.getPage (pageNum));
 			yield return StartCoroutine (iiifImage.UpdateImage ());
 			pages [page].material.mainTexture = iiifImage.texture;
-			pages [page].enabled = true;
+		} else {
+			pages [page].enabled = false;
 		}
 	}
 
