@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class MoveSpotlight : MonoBehaviour {
 	public float minX,minY,maxX,maxY;
 	public Camera cam;
-	public Light spotLight, worldLight;
+	public Light spotLight, worldLight, ceilingLight;
 	public Image preview;
 	public Toggle frozenToggle, hideToggle;
 	public bool frozen = false;
@@ -16,11 +16,13 @@ public class MoveSpotlight : MonoBehaviour {
 	void Update () {
 		bool isSpotlight = ButtonControls.current.isSpotlight;
 		spotLight.enabled = isSpotlight;
-		worldLight.enabled = !isSpotlight;
+		worldLight.enabled = !isSpotlight && !ceilingLight.enabled;
 		if (Input.GetKeyDown (KeyCode.F))
 			freezePosition (!frozen);
 		if (Input.GetKeyDown (KeyCode.H))
 			hideProperties (!hidingProperties);
+		if (Input.GetKeyDown (KeyCode.C))
+			ceilingLight.enabled = !ceilingLight.enabled;
 		if (!frozen) {
 			Vector3 pos = new Vector3 ();
 			Vector3 mousePos = Input.mousePosition;
