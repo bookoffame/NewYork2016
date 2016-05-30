@@ -4,40 +4,145 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using System.Net;
 
+/// <summary>
+/// Stores infomation about the current tool.
+/// </summary>
 public class ButtonControls : MonoBehaviour {
+	/// <summary>
+	/// The buttons for the tools.
+	/// </summary>
 	public Button[] buttons;
+
+	/// <summary>
+	/// The images for the tools.
+	/// </summary>
 	public Image[] images;
+
+	/// <summary>
+	/// The Popup window to use to get text input from the user.
+	/// </summary>
 	public PopUpBox popup;
+
+	/// <summary>
+	/// The camera for book mode
+	/// </summary>
 	public Move bookCam;
+
+	/// <summary>
+	/// The switcher between navigation mode and book mode cameras.
+	/// </summary>
 	public CameraSwitch switcher;
+
+	/// <summary>
+	/// The presenter of the IIIF images.
+	/// </summary>
 	public PageImages presenter;
+
+	/// <summary>
+	/// The box used to display tweets.
+	/// </summary>
 	public GameObject tweetBox;
+
+	/// <summary>
+	/// The text in the tweetBox containing the text of the tweet.
+	/// </summary>
 	public Text tweetText;
 
 	private int selected;
 	private string popupText;
 	private Regex tweetRegex;
 
+	/// <summary>
+	/// Is the spotlight on?
+	/// </summary>
 	public bool isSpotlight = false;
+
+	/// <summary>
+	/// The spotlight.
+	/// </summary>
 	public MoveSpotlight spotlight;
 
+	/// <summary>
+	/// The twitter bird.
+	/// </summary>
 	public GameObject twitterBirdObj;
+
+	/// <summary>
+	/// The twitter bird's image.
+	/// </summary>
 	public Image twitterBird;
+
+	/// <summary>
+	/// The twitter bird's idle image.
+	/// </summary>
 	public Sprite twitterBirdClosed;
+
+	/// <summary>
+	/// The twitter bird's talking image.
+	/// </summary>
 	public Sprite twitterBirdOpen;
+
+	/// <summary>
+	/// The sound to play when the twitter bird is talking.
+	/// </summary>
 	public AudioSource twitterSound;
+
+	/// <summary>
+	/// The dialog box to use to display text to the user.
+	/// </summary>
 	public DialogBox dialog;
 
+
+	/// <summary>
+	/// The current ButtonControls instance.
+	/// </summary>
 	public static ButtonControls current;
+
+	/// <summary>
+	/// The ID for the Light Tool.
+	/// </summary>
 	public const int LIGHT_TOOL = 0;
+
+	/// <summary>
+	/// The ID for the Annotation Tool.
+	/// </summary>
 	public const int ANNOTATION_TOOL = 1;
+
+	/// <summary>
+	/// The ID for the Hand Tool.
+	/// </summary>
 	public const int HAND_TOOL = 2;
+
+	/// <summary>
+	/// The ID for the Directory Tool.
+	/// </summary>
 	public const int DIRECTORY_TOOL = 3;
+
+	/// <summary>
+	/// The ID for the Display Annotations Tool.
+	/// </summary>
 	public const int READER_TOOL = 4;
+
+	/// <summary>
+	/// The ID for the Open/Close Book Tool.
+	/// </summary>
 	public const int SELECTION_TOOL = 6;
-	public const int zoom_TOOL = 5;
+
+	/// <summary>
+	/// The ID for the Zoom Tool (currently not used).
+	/// </summary>
+	public const int ZOOM_TOOL = 5;
+
+	/// <summary>
+	/// The ID for the Transcription Tool.
+	/// </summary>
 	public const int LENS_TOOL = 8;
+
+	/// <summary>
+	/// The ID for the Twitter Tool.
+	/// </summary>
 	public const int TWITTER_TOOL = 9;
+
 	// Use this for initialization
 	void Start () {
 		selected = -1;
@@ -49,6 +154,9 @@ public class ButtonControls : MonoBehaviour {
 		tweetRegex = new Regex ("<div class=\"js-tweet-text-container\">\\s*?<p class=\"TweetTextSize TweetTextSize--16px js-tweet-text tweet-text\" lang=\"en\" data-aria-label-part=\"0\">(.*?)<\\/p>\\s*?<\\/div>");
 	}
 
+	/// <summary>
+	/// Causes a popup window to be display, prompting the user for input.
+	/// </summary>
 	public IEnumerator PopUp(){
 		int old = selected;
 		clearSelected ();
@@ -64,13 +172,27 @@ public class ButtonControls : MonoBehaviour {
 		changeSelected(old);
 	}
 
+	/// <summary>
+	/// Gets the text from the popup window.
+	/// </summary>
+	/// <returns>The text inputed into the popup window.</returns>
 	public string getPopupText(){
 		return popupText;
 	}
+
+	/// <summary>
+	/// Gets the currently selected tool.
+	/// </summary>
+	/// <returns>The integer id of the currently selected tool.</returns>
 	public int getSelected(){
 		return selected;
 	}
 
+
+	/// <summary>
+	/// Changes the currently selected tool.
+	/// </summary>
+	/// <param name="newSelected">The tool to select.</param>
 	public void changeSelected(int newSelected){
 		if (newSelected == TWITTER_TOOL) {
 			twitterBirdObj.SetActive (!twitterBirdObj.activeInHierarchy);
@@ -126,11 +248,17 @@ public class ButtonControls : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Makes no tool be selected.
+	/// </summary>
 	public void clearSelected(){
 		clearLast ();
 		selected = -1;
 	}
 
+	/// <summary>
+	/// Shows the latest tweet from our twitter account.
+	/// </summary>
 	public void ShowLatestTweet(){
 		WebClient client = new WebClient ();
 		string data = client.DownloadString ("https://twitter.com/TabulaFamae");
@@ -142,6 +270,9 @@ public class ButtonControls : MonoBehaviour {
 		StartCoroutine (HideTweetBox ());
 	}
 
+	/// <summary>
+	/// Hides the tweet box.
+	/// </summary>
 	public IEnumerator HideTweetBox(){
 		yield return new WaitForSeconds (2);
 		twitterBird.sprite = twitterBirdClosed;

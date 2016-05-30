@@ -4,15 +4,53 @@ using System.Collections;
 using System.IO;
 using AssemblyCSharp;
 
+/// <summary>
+/// Presents the IIIF images from a manifest on 6 pages.
+/// </summary>
 public class PageImages : MonoBehaviour {
+	/// <summary>
+	/// The pages to present the IIIF images on.
+	/// </summary>
 	public Renderer[] pages;
+
+	/// <summary>
+	/// Used to obtain the images.
+	/// </summary>
 	public IIIFImageGet iiifImage;
+
+	/// <summary>
+	/// The manifest URL.
+	/// </summary>
 	public string manifestURL;
+
+	/// <summary>
+	/// The texture to display when loading images
+	/// </summary>
 	public Texture2D loadingTexture;
 
+	/// <summary>
+	/// Retrieve infomation about annotations on the pages.
+	/// </summary>
 	public Annotation[] annotation;
+
+	/// <summary>
+	/// The annotation drawers.
+	/// </summary>
 	public AnnotationDrawer[] drawers;
-	public TranscriptionTool leftTrans, rightTrans;
+
+	/// <summary>
+	/// The left transcription.
+	/// </summary>
+	public TranscriptionTool leftTrans;
+
+	/// <summary>
+	/// The right transcription.
+	/// </summary>
+	public TranscriptionTool rightTrans;
+
+	/// <summary>
+	/// The text that display the page number.
+	/// </summary>
 	public Text pageDisplay;
 
 	private ArrayList annotations;
@@ -50,6 +88,9 @@ public class PageImages : MonoBehaviour {
 		yield return new WaitUntil(()=>true);
 	}
 
+	/// <summary>
+	/// Shifts page's textures to the left and loads the next two pages.
+	/// </summary>
 	public IEnumerator TurnPageLeft(){
 		yield return new WaitWhile (() => loadingLeft);
 		loadingLeft = true;
@@ -69,6 +110,9 @@ public class PageImages : MonoBehaviour {
 		loadingLeft = false;
 	}
 
+	/// <summary>
+	/// Shifts page's textures to the right and loads the previous two pages.
+	/// </summary>
 	public IEnumerator TurnPageRight(){
 		yield return new WaitWhile (() => loadingRight);
 		loadingRight = true;
@@ -88,9 +132,22 @@ public class PageImages : MonoBehaviour {
 		loadingRight = false;
 	}
 
+	/// <summary>
+	/// Determines whether this instance is loading left pages.
+	/// </summary>
+	/// <returns><c>true</c> if this instance is loading left pages; otherwise, <c>false</c>.</returns>
 	public bool IsLoadingLeft(){return loadingLeft;}
+
+	/// <summary>
+	/// Determines whether this instance is loading right pages.
+	/// </summary>
+	/// <returns><c>true</c> if this instance is loading right pages; otherwise, <c>false</c>.</returns>
 	public bool IsLoadingRight(){return loadingRight;}
 
+	/// <summary>
+	/// Shows/Hides the annotations.
+	/// </summary>
+	/// <param name="isShowing">If set to <c>true</c> shows annotations. Otherwise, hides annotations.</param>
 	public void ShowAnnotations(bool isShowing){
 		foreach (AnnotationDrawer d in drawers) {
 			d.ShowAnnotations (isShowing);
@@ -98,6 +155,9 @@ public class PageImages : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Updates the annotations that are being drawn.
+	/// </summary>
 	public void UpdateAnnotations(){
 		if (curr != 0)
 		    for (int i = 0; i < drawers.Length; i++) {
@@ -127,6 +187,11 @@ public class PageImages : MonoBehaviour {
 			rightTrans.UpdatesTranscriptions (empty);
 	}
 
+	/// <summary>
+	/// Gets the annotations for a specified page.
+	/// </summary>
+	/// <returns>The annotations for the page.</returns>
+	/// <param name="which">Which page to get the annotations for (0 for left, 1 for right).</param>
 	public Annotation.AnnotationBox[] GetAnnotations(int which){
 		if (File.Exists(annotation[which].LocalAnnotationFile()))
 			annotations = annotation[which].GetAnnotations (File.ReadAllText(annotation[which].LocalAnnotationFile()), annotation[which].webAddress);

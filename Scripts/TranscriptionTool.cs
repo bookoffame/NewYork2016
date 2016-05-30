@@ -2,9 +2,28 @@
 using UnityEngine.UI;
 using System.Collections;
 
+/// <summary>
+/// Displays the transcription of the text.
+/// </summary>
 public class TranscriptionTool : MonoBehaviour {
-	public Transform topLeft, bottomRight;
+	/// <summary>
+	/// The location of the top left corner of the page.
+	/// </summary>
+	public Transform topLeft; 
+
+	/// <summary>
+	/// The location of the bottom right corner of the page.
+	/// </summary>
+	public Transform bottomRight;
+
+	/// <summary>
+	/// The boundaries of the transcription.
+	/// </summary>
 	public RectTransform annotations;
+
+	/// <summary>
+	/// The canvas.
+	/// </summary>
 	public Transform canvas;
 
 	private Annotation.AnnotationBox boxes;
@@ -18,6 +37,10 @@ public class TranscriptionTool : MonoBehaviour {
 		texture.Apply();
 	}
 
+	/// <summary>
+	/// Updates the transcription.
+	/// </summary>
+	/// <param name="annos">The new transcription.</param>
 	public void UpdatesTranscriptions(Annotation.AnnotationBox annos){
 		boxes = annos;
 		text = annotations.gameObject.GetComponentInChildren<Text> ();

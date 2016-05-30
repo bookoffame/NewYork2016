@@ -1,12 +1,38 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Controls page movement animation
+/// </summary>
 public class HandOnPage : MonoBehaviour {
+	/// <summary>
+	/// The animator of the page.
+	/// </summary>
 	public Animator animator;
+
+	/// <summary>
+	/// The Collider of the page.
+	/// </summary>
 	public Collider page;
+
+	/// <summary>
+	/// The presenter of the IIIF images.
+	/// </summary>
 	public PageImages pageImages;
+
+	/// <summary>
+	/// The width of the page.
+	/// </summary>
 	public float pageWidth;
+
+	/// <summary>
+	/// Is this the right page?
+	/// </summary>
 	public bool isRight;
+
+	/// <summary>
+	/// Pages to hide when this page is over them
+	/// </summary>
 	public Renderer[] others;
 
 	private float lastPos;
@@ -17,6 +43,7 @@ public class HandOnPage : MonoBehaviour {
 		lastPos = 0;
 		released = false;
 	}
+
 	// Update is called once per frame
 	void Update () {
 		bool hand = ButtonControls.current.getSelected () == ButtonControls.HAND_TOOL;

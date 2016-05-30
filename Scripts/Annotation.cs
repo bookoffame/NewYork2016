@@ -3,18 +3,80 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using System.IO;
 
+/// <summary>
+/// Creates and retrieves annotations.
+/// </summary>
 public class Annotation : MonoBehaviour {
-	public int pageWidth, pageHeight;
+	/// <summary>
+	/// The width of the image.
+	/// </summary>
+	/// <value>
+	/// The width used to calculate annotation coordinates 
+	/// </value>
+	public int pageWidth;
+
+	/// <summary>
+	/// The height of the image.
+	/// </summary>
+	/// <value>
+	/// The height used to calculate annotation coordinates 
+	/// </value>
+	public int pageHeight;
+
+	/// <summary>
+	/// The Collider used to calculate where on the page the user clicked.
+	/// </summary>
 	public Collider page;
 	public PageImages webdata;
-	public Transform topLeft, bottomRight;
 
+	/// <summary>
+	/// The location of the top left corner of the page.
+	/// </summary>
+	public Transform topLeft;
+
+	/// <summary>
+	/// The location of the bottom right corner of the page.
+	/// </summary>
+	public Transform bottomRight;
+
+	/// <summary>
+	/// The web address to write to the annotation file.
+	/// </summary>
 	public string webAddress;
-	private int sx, sy;
-	private int w, h;
-	private Vector2 originalStart, originalScreenStart;
+
+	/// <summary>
+	/// The original starting x for a new annotation.
+	/// </summary>
+	private int sx;
+
+	/// <summary>
+	/// The original starting y for a new annotation.
+	/// </summary>
+	private int sy;
+
+	/// <summary>
+	/// The width of a new annotation.
+	/// </summary>
+	private int w;
+
+	/// <summary>
+	/// The height of a new annotation.
+	/// </summary>
+	private int h;
+
+	/// <summary>
+	/// Is the user creating a new annotation?
+	/// </summary>
 	private bool annotating;
+
+	/// <summary>
+	/// The new annotation to create.
+	/// </summary>
 	private AnnotationBox anno;
+
+	/// <summary>
+	/// The texture used when selecting an area for a new annotation.
+	/// </summary>
 	private Texture2D texture;
 
 	void Start()
@@ -31,10 +93,21 @@ public class Annotation : MonoBehaviour {
 		
 	}
 
+
+	/// <summary>
+	/// Updates the web address used for writting annotations.
+	/// </summary>
+	/// <param name="newAddress">The new web address to write for new annotations.</param>
 	public void UpdateWebAddress(string newAddress){
 		webAddress = newAddress;
 	}
 
+	/// <summary>
+	/// Get all the annotations corresponding to a specific IIIF image. 
+	/// </summary>
+	/// <returns>An ArrayList of all the annotations corresponding to a webpage (each annotation is an AnnotationBox).</returns>
+	/// <param name="data">The source annotation file to parse as a String.</param>
+	/// <param name="url">The URL that represents the IIIF image to look for annotations for.</param>
 	public ArrayList GetAnnotations (string data, string url)
 	{
 		data = data.Substring (1);
@@ -57,18 +130,27 @@ public class Annotation : MonoBehaviour {
 			}
 		}
 		return list;
-
 	}
 
+	/// <summary>
+	/// Gets each pair of matching "{" "}" braces.
+	/// </summary>
+	/// <returns>Each pair of "{" "}" braces.</returns>
+	/// <param name="s">The string to look for pairs in.</param>
 	private IEnumerable GetPair(string s){
 		int count = 0;
 
+		//The position of the last "{" brace
 		ArrayList last = new ArrayList();
+
 		for (int i = 0; i < s.Length; i++) {
+			//If we find a "{", add its position to the end of last
 			if (s [i] == '{') {
 				last.Add (i);
 				count++;
-			} else if (s [i] == '}' && count > 0) {
+			}
+			//Else if we find a "}", group it with its corresponding "{" and return the string between them
+			else if (s [i] == '}' && count > 0) {
 				count--;
 				int start = (int)last [count];
 				last.RemoveAt (count);
@@ -76,6 +158,10 @@ public class Annotation : MonoBehaviour {
 			}
 		}
 	}
+
+	/// <summary>
+	/// Marks the region of the annotation on screen.
+	/// </summary>
 	private void MarkAnnotation(){
 		RaycastHit hit;
 		Vector3 topLeftCorr = Camera.main.WorldToScreenPoint (topLeft.position);
@@ -135,6 +221,11 @@ public class Annotation : MonoBehaviour {
 			annotating = false;
 		}
 	}
+
+	/// <summary>
+	/// Get the path to the local annotation file.
+	/// </summary>
+	/// <returns>The path to the local annotation file.</returns>
 	public string LocalAnnotationFile(){
 		return  Application.persistentDataPath + "/anno.json";
 	}
@@ -202,9 +293,34 @@ public class Annotation : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Contains data needed to display an annotation.
+	/// </summary>
 	public struct AnnotationBox
 	{
+		/// <summary>
+		/// The contents of the annotation.
+		/// </summary>
 		public string contents;
-		public float x,y,w,h;
+
+		/// <summary>
+		/// The horizontal offset of the annotation from the left side of the page, as a percentage of page width.
+		/// </summary>
+		public float x;
+
+		/// <summary>
+		/// The vertical offset of the annotation from the top side of the page, as a percentage of page height.
+		/// </summary>
+		public float y;
+
+		/// <summary>
+		/// The width of the annotation, as a percentage of page width.
+		/// </summary>
+		public float w;
+
+		/// <summary>
+		/// The height of the annotation, as a percentage of page height.
+		/// </summary>
+		public float h;
 	};
 }

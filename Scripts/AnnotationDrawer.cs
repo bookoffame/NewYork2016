@@ -2,10 +2,28 @@
 using UnityEngine.UI;
 using System.Collections;
 
+/// <summary>
+/// Draws annotation to the screen.
+/// </summary>
 public class AnnotationDrawer : MonoBehaviour {
-	
-	public Transform topLeft, bottomRight;
+	/// <summary>
+	/// The top left corner of the page to draw to.
+	/// </summary>
+	public Transform topLeft;
+
+	/// <summary>
+	/// The bottom right corner of the page to draw to.
+	/// </summary>
+	public Transform bottomRight;
+
+	/// <summary>
+	/// The annotation object to draw.
+	/// </summary>
 	public Transform annoObj;
+
+	/// <summary>
+	/// The location of the canvas.
+	/// </summary>
 	public Transform canvas;
 
 	private Annotation.AnnotationBox[] boxes;
@@ -23,6 +41,10 @@ public class AnnotationDrawer : MonoBehaviour {
 		isShowing = false;
 	}
 
+	/// <summary>
+	/// Updates the annotations this instance draws.
+	/// </summary>
+	/// <param name="annos">The new annotations to draw.</param>
 	public void UpdatesAnnotations(Annotation.AnnotationBox[] annos){
 		if (annotations != null)
 			for (int i = 0; i < annotations.Length; i++)
@@ -39,6 +61,10 @@ public class AnnotationDrawer : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Shows/Hides the annotations.
+	/// </summary>
+	/// <param name="isShowing">If set to <c>true</c> show the annotations, else hides the annotations.</param>
 	public void ShowAnnotations(bool isShowing){
 		this.isShowing = isShowing;
 		foreach (Transform o in annotations) {

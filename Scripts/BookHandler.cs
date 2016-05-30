@@ -1,13 +1,30 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Controls the opening and closing of the book.
+/// </summary>
 public class BookHandler : MonoBehaviour {
-
+	/// <summary>
+	/// The animator of the book.
+	/// </summary>
 	public Animator animator;
+
+	/// <summary>
+	/// The pages of the book.
+	/// </summary>
 	public GameObject pages;
+
+	/// <summary>
+	/// The Colliders for the front and back covers of the book.
+	/// </summary>
 	public Collider[] models;
+
+	/// <summary>
+	/// The Toolbar UI.
+	/// </summary>
 	public UIPopUp myUI;
-	// Update is called once per frame
+
 	void Update () {
 		RaycastHit hit;
 		bool isHit = false;
