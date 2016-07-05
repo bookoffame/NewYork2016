@@ -14,11 +14,6 @@ public class ImageBufferer : MonoBehaviour {
 	private Texture2D[] pageImages;
 
 	/// <summary>
-	/// Used to obtain the images.
-	/// </summary>
-	private IIIFImageGet[] downloaders;
-
-	/// <summary>
 	/// The manifest URL.
 	/// </summary>
 	public string manifestURL;
@@ -41,20 +36,8 @@ public class ImageBufferer : MonoBehaviour {
 		pageImages = new Texture2D[12];
 		data = new IIIFGetManifest ();
 		pageToImage = new Hashtable();
-		downloaders = new IIIFImageGet[pageImages.Length];
-		for (int i = 0; i < downloaders.Length; i++) {
+		for (int i = 0; i < pageImages.Length; i++) {
 			pageImages [i] = loadingTexture;
-			downloaders [i] = gameObject.AddComponent<IIIFImageGet>();
-			downloaders [i].cropOffsetX = 60;
-			downloaders [i].cropOffsetY = 210;
-			downloaders [i].cropWidth = 2900;
-			downloaders [i].cropHeight = 4000;
-			downloaders [i].targetWidth = 2900;
-			downloaders [i].targetHeight = 4000;
-			downloaders [i].rotation = 0;
-			downloaders [i].mirrored = false;
-			downloaders [i].quality = "default";
-			downloaders [i].format = ".jpg";
 		}
 		curr = 72;
 		data.download(manifestURL);
@@ -121,46 +104,53 @@ public class ImageBufferer : MonoBehaviour {
 		int pageNum = curr * 2 - 3 + image;
 		pageToImage [pageNum] = image;
 		if (pageNum > 0 && pageNum < data.getNumOfPages ()) {
-			downloaders [image].StopAllCoroutines ();
+			IIIFImageGet downloader = ScriptableObject.CreateInstance<IIIFImageGet>();
+			downloader.cropOffsetY = 210;
+			downloader.cropWidth = 2900;
+			downloader.cropHeight = 4000;
+			downloader.targetWidth = 2900;
+			downloader.targetHeight = 4000;
+			downloader.rotation = 0;
+			downloader.mirrored = false;
+			downloader.quality = "default";
+			downloader.format = ".jpg";
 			pageImages [image] = loadingTexture;
 			if (pageNum % 2 == 1) {
-				downloaders[image].cropOffsetX = 175;
+				downloader.cropOffsetX = 175;
 			} else {
-				downloaders[image].cropOffsetX = 60;
+				downloader.cropOffsetX = 60;
 			}
-			downloaders[image].changeAddress (data.getPage (pageNum));
-			downloaders[image].targetWidth = downloaders[image].cropWidth/2;
-			downloaders[image].targetHeight = downloaders[image].cropHeight/2;
-			yield return StartCoroutine (downloaders[image].UpdateImage ());
+			downloader.changeAddress (data.getPage (pageNum));
+			downloader.targetWidth = downloader.cropWidth/2;
+			downloader.targetHeight = downloader.cropHeight/2;
+			yield return StartCoroutine (downloader.UpdateImage ());
 			if (!pageToImage.Contains(pageNum)) {
 				yield break;
 			}
-			pageImages [(int)pageToImage[pageNum]] = downloaders [image].texture;
-			downloaders[image].targetWidth = downloaders[image].cropWidth;
-			downloaders[image].targetHeight = downloaders[image].cropHeight;
-			yield return StartCoroutine (downloaders[image].UpdateImage ());
+			pageImages [(int)pageToImage[pageNum]] = downloader.texture;
+			downloader.targetWidth = downloader.cropWidth;
+			downloader.targetHeight = downloader.cropHeight;
+			yield return StartCoroutine (downloader.UpdateImage ());
 			if (!pageToImage.Contains(pageNum)) {
 				yield break;
 			}
-			pageImages [(int)pageToImage[pageNum]] = downloaders [image].texture;
-		} else {
+			pageImages [(int)pageToImage[pageNum]] = downloader.texture;
+		} 
+		else {
 			pageImages [image] = loadingTexture;
 		}
 		pageToImage.Remove (pageNum);
 	}
 
-	void OnGUI(){
+	/*void OnGUI(){
 		string output = "";
 		ArrayList list = new ArrayList ();
 		foreach (int key in pageToImage.Keys)
 			list.Add (key);
 		list.Sort ();
 		foreach (int key in list)
-			if (key % 2 == 0)
-				output += "Loading page " + ((key - 3)/2).ToString () + "v to " + pageToImage [key].ToString () + ".\n";
-		    else
-				output += "Loading page " + ((key - 3)/2).ToString () + "r to " + pageToImage [key].ToString () + ".\n";
+		    output += "Loading page " + (key - curr * 2 - 3) + " to " + pageToImage [key].ToString () + ".\n";
 		GUI.Box (new Rect (0,0,200,20*pageToImage.Count), output);
-	}
+	}*/
 
 }

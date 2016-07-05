@@ -15,7 +15,7 @@ public class PageImages : MonoBehaviour {
 
 	public ImageBufferer buffer;
 
-	public IIIFImageGet iiifImage;
+	private IIIFImageGet iiifImage;
 	/// <summary>
 	/// Retrieve infomation about annotations on the pages.
 	/// </summary>
@@ -49,6 +49,7 @@ public class PageImages : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		annotations = new ArrayList ();
+		iiifImage = ScriptableObject.CreateInstance<IIIFImageGet>();
 		StartCoroutine(init ());
 	}
 
