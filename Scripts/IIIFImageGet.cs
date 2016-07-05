@@ -34,7 +34,7 @@ public class IIIFImageGet : MonoBehaviour {
 	/// <summary>
 	/// The width of the target image.
 	/// </summary>
-	public int targetWidth;
+	public int targetWidth = -1;
 
 	/// <summary>
 	/// The height of the target image.

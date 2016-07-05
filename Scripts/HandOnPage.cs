@@ -89,6 +89,8 @@ public class HandOnPage : MonoBehaviour {
 	}
 
 	private void loadPages(){
+		foreach (Renderer r in others)
+			r.enabled = true;
 		if (isRight) {
 			StartCoroutine (pageImages.TurnPageLeft ());
 		} else {

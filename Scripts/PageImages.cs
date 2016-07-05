@@ -13,21 +13,9 @@ public class PageImages : MonoBehaviour {
 	/// </summary>
 	public Renderer[] pages;
 
-	/// <summary>
-	/// Used to obtain the images.
-	/// </summary>
+	public ImageBufferer buffer;
+
 	public IIIFImageGet iiifImage;
-
-	/// <summary>
-	/// The manifest URL.
-	/// </summary>
-	public string manifestURL;
-
-	/// <summary>
-	/// The texture to display when loading images
-	/// </summary>
-	public Texture2D loadingTexture;
-
 	/// <summary>
 	/// Retrieve infomation about annotations on the pages.
 	/// </summary>
@@ -54,7 +42,6 @@ public class PageImages : MonoBehaviour {
 	public Text pageDisplay;
 
 	private ArrayList annotations;
-	private IIIFGetManifest data;
 	private int curr;
 	private bool loadingRight, loadingLeft;
 	private string transcription;
@@ -62,10 +49,6 @@ public class PageImages : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		annotations = new ArrayList ();
-		data = new IIIFGetManifest ();
-		data.download(manifestURL);
-		loadingLeft = true;
-		loadingRight = true;
 		StartCoroutine(init ());
 	}
 
@@ -73,13 +56,11 @@ public class PageImages : MonoBehaviour {
 	{
 		for (int i = 0; i < 6; i++) {
 			pages [i].enabled = true;
-			pages [i].material.mainTexture = loadingTexture;
+			pages [i].material.mainTexture = buffer.GetImage(i);
 		}
 		curr = 73;
-		for (int i = 0; i < 6; i++)
-			yield return StartCoroutine(InitPage (i));
-		annotation [0].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2 - 1)));
-		annotation [1].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2)));
+		annotation [0].UpdateWebAddress (iiifImage.removeTail(buffer.GetURL(curr*2 - 1)));
+		annotation [1].UpdateWebAddress (iiifImage.removeTail(buffer.GetURL(curr*2)));
 		transcription = Resources.Load<TextAsset> ("Transcriptions/anno").text;
 		UpdateAnnotations ();
 		UpdatePageDisplay ();
@@ -88,61 +69,49 @@ public class PageImages : MonoBehaviour {
 		yield return new WaitUntil(()=>true);
 	}
 
+	void Update(){
+		for (int i = 0; i < 6; i++) {
+			pages [i].material.mainTexture = buffer.GetImage(i);
+		}
+	}
+
 	/// <summary>
 	/// Shifts page's textures to the left and loads the next two pages.
 	/// </summary>
 	public IEnumerator TurnPageLeft(){
-		yield return new WaitWhile (() => loadingLeft);
-		loadingLeft = true;
-		for (int i = 0; i < 4; i++) {
-			pages [i].enabled = true;
-			pages[i].material.mainTexture = pages[i + 2].material.mainTexture;
-		}
+		buffer.TurnPageLeft ();
 		curr++;
-		annotation [0].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2 - 1)));
-		annotation [1].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2)));
+		annotation [0].UpdateWebAddress (iiifImage.removeTail(buffer.GetURL(curr*2 - 1)));
+		annotation [1].UpdateWebAddress (iiifImage.removeTail(buffer.GetURL(curr*2)));
 		UpdateAnnotations ();
-		pages [4].material.mainTexture = loadingTexture;
-		pages [5].material.mainTexture = loadingTexture;
 		UpdatePageDisplay ();
-		yield return StartCoroutine(InitPage (4));
-		yield return StartCoroutine(InitPage (5));
-		loadingLeft = false;
+		yield return new WaitUntil (() => true);
 	}
 
 	/// <summary>
 	/// Shifts page's textures to the right and loads the previous two pages.
 	/// </summary>
 	public IEnumerator TurnPageRight(){
-		yield return new WaitWhile (() => loadingRight);
-		loadingRight = true;
-		for (int i = 5; i > 1; i--) {
-			pages [i].enabled = true;
-			pages[i].material.mainTexture = pages[i - 2].material.mainTexture;
-		}
+		buffer.TurnPageRight ();
 		curr--;
-		annotation [0].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2 - 1)));
-		annotation [1].UpdateWebAddress (iiifImage.removeTail(data.getPage(curr*2)));
+		annotation [0].UpdateWebAddress (iiifImage.removeTail(buffer.GetURL(curr*2 - 1)));
+		annotation [1].UpdateWebAddress (iiifImage.removeTail(buffer.GetURL(curr*2)));
 		UpdateAnnotations ();
-		pages [0].material.mainTexture = loadingTexture;
-		pages [1].material.mainTexture = loadingTexture;
 		UpdatePageDisplay ();
-		yield return StartCoroutine(InitPage (0));
-		yield return StartCoroutine(InitPage (1));
-		loadingRight = false;
+		yield return new WaitUntil (() => true);
 	}
 
 	/// <summary>
 	/// Determines whether this instance is loading left pages.
 	/// </summary>
 	/// <returns><c>true</c> if this instance is loading left pages; otherwise, <c>false</c>.</returns>
-	public bool IsLoadingLeft(){return loadingLeft;}
+	public bool IsLoadingLeft(){return false;}
 
 	/// <summary>
 	/// Determines whether this instance is loading right pages.
 	/// </summary>
 	/// <returns><c>true</c> if this instance is loading right pages; otherwise, <c>false</c>.</returns>
-	public bool IsLoadingRight(){return loadingRight;}
+	public bool IsLoadingRight(){return false;}
 
 	/// <summary>
 	/// Shows/Hides the annotations.
@@ -199,24 +168,6 @@ public class PageImages : MonoBehaviour {
 		for (int i = 0; i < output.Length; i++)
 			output [i] = (Annotation.AnnotationBox)annotations [i];
 		return output;
-	}
-
-	private IEnumerator InitPage(int page)
-	{
-		int pageNum = curr * 2 - 3 + page;
-		if (pageNum > 0 && pageNum < data.getNumOfPages ()) {
-			pages [page].enabled = true;
-			if (pageNum % 2 == 1) {
-				iiifImage.cropOffsetX = 175;
-			} else {
-				iiifImage.cropOffsetX = 60;
-			}
-			iiifImage.changeAddress (data.getPage (pageNum));
-			yield return StartCoroutine (iiifImage.UpdateImage ());
-			pages [page].material.mainTexture = iiifImage.texture;
-		} else {
-			pages [page].enabled = false;
-		}
 	}
 
 	private void UpdatePageDisplay(){
