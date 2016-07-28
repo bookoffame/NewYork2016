@@ -31,8 +31,9 @@ public class BookHandler : MonoBehaviour {
 		if (ButtonControls.current.getSelected() == ButtonControls.SELECTION_TOOL && myUI.IsShowing()) {
 			foreach (Collider model in models) {
 				if (!isHit && model.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit, 1000)) {
-					if (Input.GetMouseButtonDown(0))
+					if (Input.GetMouseButtonDown (0)) {
 						animator.SetTrigger ("Grabbed");
+					}
 				}
 			}
 		}
