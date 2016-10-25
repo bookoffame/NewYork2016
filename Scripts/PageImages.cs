@@ -150,16 +150,10 @@ public class PageImages : MonoBehaviour {
 		empty.h = 0;
 
 		annotations = annotation[0].GetAnnotations (transcription, annotation [0].webAddress);
-		if (annotations.Count > 0)
-			leftTrans.UpdatesTranscriptions ((Annotation.AnnotationBox)annotations [0]);
-		else
-			leftTrans.UpdatesTranscriptions (empty);
+		leftTrans.UpdatesTranscriptions (GetAnnotationsBoxArray());
 		
 		annotations = annotation[1].GetAnnotations (transcription, annotation [1].webAddress);
-		if (annotations.Count > 0) 
-			rightTrans.UpdatesTranscriptions ((Annotation.AnnotationBox)annotations [0]);
-		else
-			rightTrans.UpdatesTranscriptions (empty);
+		rightTrans.UpdatesTranscriptions (GetAnnotationsBoxArray());
 	}
 
 	public void AddNewAnnotation(int page, Annotation.AnnotationBox anno){
@@ -175,6 +169,10 @@ public class PageImages : MonoBehaviour {
 	public Annotation.AnnotationBox[] GetAnnotations(int which){
 		if (File.Exists(annotation[which].LocalAnnotationFile()))
 			annotations = annotation[which].GetAnnotations (File.ReadAllText(annotation[which].LocalAnnotationFile()), annotation[which].webAddress);
+		return GetAnnotationsBoxArray ();
+	}
+
+	private Annotation.AnnotationBox[] GetAnnotationsBoxArray(){
 		Annotation.AnnotationBox[] output = new Annotation.AnnotationBox[annotations.Count];
 		for (int i = 0; i < output.Length; i++)
 			output [i] = (Annotation.AnnotationBox)annotations [i];
