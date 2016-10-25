@@ -11,23 +11,168 @@
 				"id": "_:an5247664345695614614",
 				"@type": "cnt:ContentAsText",
 				"format": "text/plain",
-				"chars": "The Wife of Bathe Prologue
-Experience, though noon auctoritee
-Were in this world, were right ynogh to me
-To speke of wo that is in mariage;
-For, lordynges, sith I twelf yeer was of age,
-Thonked be God, that is eterne on lyve,
-Housbondes at chirche-dore I have had fyve-
-For I so ofte have ywedded bee-
-And alle were worthy men in hir degree.
-But me was toold, certeyn, nat longe agoon is,
-That sith that Crist ne wente nevere but onis
-To weddyng in the Cane of Galilee,
-That by the same ensample, taughte he me,",
+				"chars": "The Wife of Bathe Prologue",
 				"language": "en",
 			},
-			"on": "http://www.e-codices.unifr.ch/loris/fmb/fmb-cb-0048/fmb-cb-0048_071r.jp2#xywh=376,2445,1809,1154"
+			"on": "http://www.e-codices.unifr.ch/loris/fmb/fmb-cb-0048/fmb-cb-0048_071r.jp2#xywh=400,2650,1550,150"
 		},
+
+		{
+			"id": "_:an5247664345695605724",
+			"@type": "oa:Annotation",
+			"resource": {
+				"id": "_:an5247664345695614614",
+				"@type": "cnt:ContentAsText",
+				"format": "text/plain",
+				"chars": "Experience, though noon auctoritee",
+				"language": "en",
+			},
+			"on": "http://www.e-codices.unifr.ch/loris/fmb/fmb-cb-0048/fmb-cb-0048_071r.jp2#xywh=400,2800,1600,80"
+		},		
+		
+		{
+			"id": "_:an5247664345695605724",
+			"@type": "oa:Annotation",
+			"resource": {
+				"id": "_:an5247664345695614614",
+				"@type": "cnt:ContentAsText",
+				"format": "text/plain",
+				"chars": "Were in this world, were right ynow for me",
+				"language": "en",
+			},
+			"on": "http://www.e-codices.unifr.ch/loris/fmb/fmb-cb-0048/fmb-cb-0048_071r.jp2#xywh=820,2880,1400,80"
+		},
+
+		{
+			"id": "_:an5247664345695605724",
+			"@type": "oa:Annotation",
+			"resource": {
+				"id": "_:an5247664345695614614",
+				"@type": "cnt:ContentAsText",
+				"format": "text/plain",
+				"chars": "To speke of wo that is in mariage",
+				"language": "en",
+			},
+			"on": "http://www.e-codices.unifr.ch/loris/fmb/fmb-cb-0048/fmb-cb-0048_071r.jp2#xywh=820,2965,1250,80"
+		},	
+	
+		{
+			"id": "_:an5247664345695605724",
+			"@type": "oa:Annotation",
+			"resource": {
+				"id": "_:an5247664345695614614",
+				"@type": "cnt:ContentAsText",
+				"format": "text/plain",
+				"chars": "For lordynges sith I 12 yere was of age",
+				"language": "en",
+			},
+			"on": "http://www.e-codices.unifr.ch/loris/fmb/fmb-cb-0048/fmb-cb-0048_071r.jp2#xywh=500,3030,1700,125"
+		},			
+	
+		{
+			"id": "_:an5247664345695605724",
+			"@type": "oa:Annotation",
+			"resource": {
+				"id": "_:an5247664345695614614",
+				"@type": "cnt:ContentAsText",
+				"format": "text/plain",
+				"chars": "Thonked be God that is eterne on lyve",
+				"language": "en",
+			},
+			"on": "http://www.e-codices.unifr.ch/loris/fmb/fmb-cb-0048/fmb-cb-0048_071r.jp2#xywh=500,3120,1500,100"
+		},
+						
+		{
+			"id": "_:an5247664345695605724",
+			"@type": "oa:Annotation",
+			"resource": {
+				"id": "_:an5247664345695614614",
+				"@type": "cnt:ContentAsText",
+				"format": "text/plain",
+				"chars": "Housbondes at chirche dore I have had fyve",
+				"language": "en",
+			},
+			"on": "http://www.e-codices.unifr.ch/loris/fmb/fmb-cb-0048/fmb-cb-0048_071r.jp2#xywh=500,3190,1650,125"
+		},
+								
+		{
+			"id": "_:an5247664345695605724",
+			"@type": "oa:Annotation",
+			"resource": {
+				"id": "_:an5247664345695614614",
+				"@type": "cnt:ContentAsText",
+				"format": "text/plain",
+				"chars": "If I so ofte might have ywedded bee",
+				"language": "en",
+			},
+			"on": "http://www.e-codices.unifr.ch/loris/fmb/fmb-cb-0048/fmb-cb-0048_071r.jp2#xywh=500,3280,1350,110"
+		},
+
+		{
+			"id": "_:an5247664345695605724",
+			"@type": "oa:Annotation",
+			"resource": {
+				"id": "_:an5247664345695614614",
+				"@type": "cnt:ContentAsText",
+				"format": "text/plain",
+				"chars": "And alle were worthy men in hir degree",
+				"language": "en",
+			},
+			"on": "http://www.e-codices.unifr.ch/loris/fmb/fmb-cb-0048/fmb-cb-0048_071r.jp2#xywh=500,3375,1650,90"
+		},
+		
+		{
+			"id": "_:an5247664345695605724",
+			"@type": "oa:Annotation",
+			"resource": {
+				"id": "_:an5247664345695614614",
+				"@type": "cnt:ContentAsText",
+				"format": "text/plain",
+				"chars": "But me was toold certeyn nat longe agoon is",
+				"language": "en",
+			},
+			"on": "http://www.e-codices.unifr.ch/loris/fmb/fmb-cb-0048/fmb-cb-0048_071r.jp2#xywh=500,3455,1550,90"
+		},
+	
+		{
+			"id": "_:an5247664345695605724",
+			"@type": "oa:Annotation",
+			"resource": {
+				"id": "_:an5247664345695614614",
+				"@type": "cnt:ContentAsText",
+				"format": "text/plain",
+				"chars": "That sith that Crist ne wente nevere but ones",
+				"language": "en",
+			},
+			"on": "http://www.e-codices.unifr.ch/loris/fmb/fmb-cb-0048/fmb-cb-0048_071r.jp2#xywh=500,3545,1550,90"
+		},
+						
+		{
+			"id": "_:an5247664345695605724",
+			"@type": "oa:Annotation",
+			"resource": {
+				"id": "_:an5247664345695614614",
+				"@type": "cnt:ContentAsText",
+				"format": "text/plain",
+				"chars": "To weddyng in the Cane of Galilee",
+				"language": "en",
+			},
+			"on": "http://www.e-codices.unifr.ch/loris/fmb/fmb-cb-0048/fmb-cb-0048_071r.jp2#xywh=500,3620,1450,90"
+		},
+		
+		{
+			"id": "_:an5247664345695605724",
+			"@type": "oa:Annotation",
+			"resource": {
+				"id": "_:an5247664345695614614",
+				"@type": "cnt:ContentAsText",
+				"format": "text/plain",
+				"chars": "That by the same ensample, taughte he me",
+				"language": "en",
+			},
+			"on": "http://www.e-codices.unifr.ch/loris/fmb/fmb-cb-0048/fmb-cb-0048_071r.jp2#xywh=500,3700,1650,100"
+		},
+		
 		{
 			"id": "_:an5247664346071777134",
 			"@type": "oa:Annotation",
@@ -76,6 +221,7 @@ For thanne thapostle seith that I am free,",
 			},
 			"on": "http://www.e-codices.unifr.ch/loris/fmb/fmb-cb-0048/fmb-cb-0048_071v.jp2#xywh=774,487,1710,3081"
 		},
+		
 		{
 			"id": "_:an5247664346328726744",
 			"@type": "oa:Annotation",
