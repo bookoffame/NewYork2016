@@ -7,24 +7,15 @@ using UnityEngine.UI;
 /// </summary>
 public class MoveSpotlight : MonoBehaviour {
 	/// <summary>
-	/// The minimum x position.
+	/// The width of spotlight movement.
 	/// </summary>
-	public float minX;
+	public int width;
 
 	/// <summary>
-	/// The minimum y position.
+	/// The height of the spotlight movement.
 	/// </summary>
-	public float minY;
 
-	/// <summary>
-	/// The max x position.
-	/// </summary>
-	public float maxX;
-
-	/// <summary>
-	/// The max y position.
-	/// </summary>
-	public float maxY;
+	public int height;
 
 	/// <summary>
 	/// The book mode camera
@@ -90,10 +81,10 @@ public class MoveSpotlight : MonoBehaviour {
 		if (!frozen) {
 			Vector3 pos = new Vector3 ();
 			Vector3 mousePos = Input.mousePosition;
-			pos.x = (maxX - minX) * (mousePos.x / Screen.width) + minX + cam.transform.position.x;
-			pos.y = (maxY - minY) * (mousePos.y / Screen.height) + minY + cam.transform.position.y;
-			pos.z = transform.position.z;
-			transform.position = Vector3.MoveTowards (transform.position, pos, 1f);
+			pos.x = (width) * (mousePos.x / Screen.width);
+			pos.y = (height) * (mousePos.y / Screen.height);
+			pos.z = transform.localPosition.z;
+			transform.localPosition = Vector3.MoveTowards (transform.localPosition, pos, 1f);
 		}
 	}
 

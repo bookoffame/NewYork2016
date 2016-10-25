@@ -7,6 +7,9 @@ using System.IO;
 /// Creates and retrieves annotations.
 /// </summary>
 public class Annotation : MonoBehaviour {
+
+	public int pageNum;
+
 	/// <summary>
 	/// The width of the image.
 	/// </summary>
@@ -79,6 +82,7 @@ public class Annotation : MonoBehaviour {
 	/// </summary>
 	private Texture2D texture;
 
+
 	void Start()
 	{
 		texture = new Texture2D(1,1);
@@ -110,7 +114,8 @@ public class Annotation : MonoBehaviour {
 	/// <param name="url">The URL that represents the IIIF image to look for annotations for.</param>
 	public ArrayList GetAnnotations (string data, string url)
 	{
-		data = data.Substring (1);
+		if (data.Length > 1)
+		    data = data.Substring (1);
 		Regex regex = new Regex ("{(\\s|.)*?\"@type\": \"oa:Annotation\",(\\s|.)*?\"@type\": \"cnt:ContentAsText\"," +
 		              "(\\s|.)*?\"chars\": \"([^\"]*?)\",(\\s|.)*?\"on\": \""
 		              + Regex.Escape (url) + "#xywh=(\\d*?),(\\d*?),(\\d*?),(\\d*?)\"(\\s|.)*?}");
@@ -213,7 +218,7 @@ public class Annotation : MonoBehaviour {
 						h = -h;
 					}
 					annotating = false;
-					StartCoroutine (MakeAnnotation (sx, sy, w, h));
+					StartCoroutine (MakeAnnotation (sx, sy, w, h, anno));
 				}
 			}
 		}
@@ -230,14 +235,15 @@ public class Annotation : MonoBehaviour {
 		return  Application.persistentDataPath + "/anno.json";
 	}
 
-	private IEnumerator MakeAnnotation(int x, int y, int w, int h){
+	private IEnumerator MakeAnnotation(int x, int y, int w, int h, AnnotationBox newAnno){
 		yield return ButtonControls.current.PopUp ();
 		string anno = ButtonControls.current.getPopupText ();
+		newAnno.contents = anno;
 		if (!anno.Equals ("")) {
 			FileStream writter;
 			string toWrite = ",\n";
 			string filename = LocalAnnotationFile ();
-			Debug.Log (filename);
+
 			if (!File.Exists (filename)) {
 				toWrite = "\n";
 				File.WriteAllText (filename,
@@ -272,7 +278,7 @@ public class Annotation : MonoBehaviour {
 
 			writter.Close ();
 		}
-		webdata.UpdateAnnotations ();
+		webdata.AddNewAnnotation(pageNum, newAnno);
 	}
 
 	void OnGUI(){

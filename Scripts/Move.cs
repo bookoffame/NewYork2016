@@ -16,11 +16,29 @@ public class Move : MonoBehaviour {
 	/// </summary>
 	public float speed;
 
+	public float maxX, minX;
+	public float maxY, minY;
+	public float maxZ, minZ;
+
 	private bool on;
 
 	void Update () {
+		float nx, ny, nz;
 		if (on) {
-			myTransform.Translate (speed * Input.GetAxis ("Horizontal"), speed * Input.GetAxis ("Vertical"), speed * Input.GetAxis ("Forward"));
+			nx = speed * Input.GetAxis ("Horizontal") + myTransform.localPosition.x;
+			ny = speed * Input.GetAxis ("Vertical") + myTransform.localPosition.y;
+			nz = speed * Input.GetAxis ("Forward") + myTransform.localPosition.z;
+
+			nx = Mathf.Min (maxX, nx);
+			nx = Mathf.Max (minX, nx);
+
+			ny = Mathf.Min (maxY, ny);
+			ny = Mathf.Max (minY, ny);
+
+			nz = Mathf.Min (maxZ, nz);
+			nz = Mathf.Max (minZ, nz);
+
+			myTransform.localPosition = new Vector3 (nx, ny, nz);
 		}
 	}
 

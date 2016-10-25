@@ -38,8 +38,7 @@ public class BookHandler : MonoBehaviour {
 			}
 		}
 
-		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("OpenState") &&
-			animator.GetCurrentAnimatorStateInfo (0).normalizedTime > 0.999) {
+		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Opened")) {
 			pages.SetActive (true);
 		}
 

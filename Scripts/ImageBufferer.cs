@@ -37,12 +37,12 @@ public class ImageBufferer : MonoBehaviour {
 		data = new IIIFGetManifest ();
 		pageToImage = new Hashtable();
 		for (int i = 0; i < pageImages.Length; i++) {
-			pageImages [i] = loadingTexture;
+			pageImages[i] = loadingTexture;
 		}
 		curr = 72;
 		data.download(manifestURL);
 		for (int i = 0; i < pageImages.Length; i++) {
-			StartCoroutine (LoadPage (i));
+			    StartCoroutine (LoadPage (i));
 		}
 	}
 
@@ -64,9 +64,9 @@ public class ImageBufferer : MonoBehaviour {
 		for (int i = 0; i < pageImages.Length - 2; i++){
 			pageImages [i] = pageImages [i + 2];
 		}
-		
-		StartCoroutine (LoadPage (pageImages.Length - 2));
-		StartCoroutine (LoadPage (pageImages.Length - 1));
+			
+			StartCoroutine (LoadPage (pageImages.Length - 2));
+			StartCoroutine (LoadPage (pageImages.Length - 1));
 	}
 
 	/// <summary>
@@ -87,8 +87,9 @@ public class ImageBufferer : MonoBehaviour {
 		for (int i = pageImages.Length - 1; i > 1; i--){
 			pageImages [i] = pageImages [i - 2];
 	    }
-		StartCoroutine (LoadPage (0));
-		StartCoroutine (LoadPage (1));
+			
+			StartCoroutine (LoadPage (0));
+			StartCoroutine (LoadPage (1));
 	}
 
 	public Texture2D GetImage(int page){
@@ -110,11 +111,11 @@ public class ImageBufferer : MonoBehaviour {
 			downloader.cropHeight = 4000;
 			downloader.targetWidth = 2900;
 			downloader.targetHeight = 4000;
-			downloader.rotation = 0;
-			downloader.mirrored = false;
+			downloader.rotation = (2 >= 2)? 0 : 180;
+			downloader.mirrored = 2 % 2 == 1;
 			downloader.quality = "default";
 			downloader.format = ".jpg";
-			pageImages [image] = loadingTexture;
+			pageImages [(int)pageToImage[pageNum]] = loadingTexture;
 			if (pageNum % 2 == 1) {
 				downloader.cropOffsetX = 175;
 			} else {
@@ -137,11 +138,9 @@ public class ImageBufferer : MonoBehaviour {
 			pageImages [(int)pageToImage[pageNum]] = downloader.texture;
 		} 
 		else {
-			pageImages [image] = loadingTexture;
+			pageImages [(int)pageToImage[pageNum]] = loadingTexture;
 		}
-		pageToImage.Remove (pageNum);
 	}
-
 	/*void OnGUI(){
 		string output = "";
 		ArrayList list = new ArrayList ();

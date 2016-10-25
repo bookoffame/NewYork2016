@@ -41,6 +41,11 @@ public class PageImages : MonoBehaviour {
 	/// </summary>
 	public Text pageDisplay;
 
+	/// <summary>
+	/// The rotation required for each page.
+	/// </summary>
+	public int[] rotations;
+
 	private ArrayList annotations;
 	private int curr;
 	private bool loadingRight, loadingLeft;
@@ -155,6 +160,11 @@ public class PageImages : MonoBehaviour {
 			rightTrans.UpdatesTranscriptions ((Annotation.AnnotationBox)annotations [0]);
 		else
 			rightTrans.UpdatesTranscriptions (empty);
+	}
+
+	public void AddNewAnnotation(int page, Annotation.AnnotationBox anno){
+		ButtonControls.current.changeSelected (ButtonControls.READER_TOOL);
+		drawers [page].AddNewAnnotation (anno);
 	}
 
 	/// <summary>

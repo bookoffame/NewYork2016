@@ -46,7 +46,7 @@ public class CameraSwitch : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKeyDown (KeyCode.B)) {
+		if (Input.GetKeyDown (KeyCode.Space)) {
 			playerCam.enabled = !playerCam.enabled;
 			bookCam.enabled = !bookCam.enabled;
 			player.ChangeControl (playerCam.enabled);
