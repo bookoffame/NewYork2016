@@ -48,8 +48,12 @@ public class HandOnPage : MonoBehaviour {
 	void Update () {
 		bool hand = ButtonControls.current.getSelected () == ButtonControls.HAND_TOOL;
 		RaycastHit hit;
-		if (!hand || !released)
-			animator.SetFloat ("HandMovement", -pageWidth * (Input.mousePosition.x - lastPos) / Screen.width);
+		if (!hand || !released){
+		    if (isRight)
+			    animator.SetFloat ("HandMovement", -pageWidth * (Input.mousePosition.x - lastPos) / Screen.width);
+			else
+				animator.SetFloat ("HandMovement", pageWidth * (Input.mousePosition.x - lastPos) / Screen.width);
+		}
 		
 		if (!((pageImages.IsLoadingLeft () && isRight) || (pageImages.IsLoadingRight () && !isRight))) {
 			lastPos = Input.mousePosition.x;
@@ -84,15 +88,49 @@ public class HandOnPage : MonoBehaviour {
 				} else if (animator.GetCurrentAnimatorStateInfo (0).normalizedTime < 0.01) {
 					animator.SetTrigger ("Released");
 				}
-			}
+			} //OLD
+
+			//New
+			/*if (hand && Input.GetMouseButtonDown (0) &&
+				animator.GetCurrentAnimatorStateInfo (0).IsName ("Opened")) {
+				if (page.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit, 1000)) {
+					if (isRight)
+					    animator.SetTrigger ("TurnRight");
+					else
+						animator.SetTrigger ("TurnLeft");
+					released = false;
+				}
+			} else if (Input.GetMouseButtonUp (0) && isPageTurning()) {
+				released = true;
+				if (animator.GetCurrentAnimatorStateInfo (0).normalizedTime < 0.5)
+					animator.SetFloat ("HandMovement", -5);
+				else
+					animator.SetFloat ("HandMovement", 5);
+			} else if (!Input.GetMouseButton (0) && isPageTurning()) {
+				if (animator.GetCurrentAnimatorStateInfo (0).normalizedTime > 0.95) {
+					loadPages ();
+					animator.SetTrigger ("Released");
+				} else if (animator.GetCurrentAnimatorStateInfo (0).normalizedTime < 0.01) {
+					animator.SetTrigger ("Released");
+				}
+			}*/
 		}
 	}
 
 	private void loadPages(){
+		foreach (Renderer r in others)
+			r.enabled = true;
 		if (isRight) {
 			StartCoroutine (pageImages.TurnPageLeft ());
 		} else {
 			StartCoroutine (pageImages.TurnPageRight ());
 		}
+	}
+
+	private bool isPageTurning(){
+		if (isRight)
+			return animator.GetCurrentAnimatorStateInfo (0).IsName ("TurnPageRight");
+		else
+			return animator.GetCurrentAnimatorStateInfo (0).IsName ("TurnPageLeft");
 	}
 }

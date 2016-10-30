@@ -48,6 +48,11 @@ public class ButtonControls : MonoBehaviour {
 	/// </summary>
 	public Text tweetText;
 
+	/// <summary>
+	/// The Inventory Box.
+	/// </summary>
+	public InventoryBox inventory;
+
 	private int selected;
 	private string popupText;
 	private Regex tweetRegex;
@@ -114,9 +119,9 @@ public class ButtonControls : MonoBehaviour {
 	public const int HAND_TOOL = 2;
 
 	/// <summary>
-	/// The ID for the Directory Tool.
+	/// The ID for the Inventory Tool.
 	/// </summary>
-	public const int DIRECTORY_TOOL = 3;
+	public const int INVENTORY_TOOL = 3;
 
 	/// <summary>
 	/// The ID for the Display Annotations Tool.
@@ -124,14 +129,19 @@ public class ButtonControls : MonoBehaviour {
 	public const int READER_TOOL = 4;
 
 	/// <summary>
+	/// The ID for the Mini Game Lens Tool.
+	/// </summary>
+	public const int MINI_GAME_LENS_TOOL = 5;
+
+	/// <summary>
 	/// The ID for the Open/Close Book Tool.
 	/// </summary>
 	public const int SELECTION_TOOL = 6;
 
 	/// <summary>
-	/// The ID for the Zoom Tool (currently not used).
+	/// The ID for the Help Tool.
 	/// </summary>
-	public const int ZOOM_TOOL = 5;
+	public const int HELP_TOOL = 7;
 
 	/// <summary>
 	/// The ID for the Transcription Tool.
@@ -194,58 +204,59 @@ public class ButtonControls : MonoBehaviour {
 	/// </summary>
 	/// <param name="newSelected">The tool to select.</param>
 	public void changeSelected(int newSelected){
-		if (newSelected == TWITTER_TOOL) {
-			twitterBirdObj.SetActive (!twitterBirdObj.activeInHierarchy);
-			if (twitterBirdObj.activeInHierarchy)
-				images [newSelected].color = new Color (1, 1, 1, 1);
-			else
-				images [newSelected].color = new Color (0.3f, 0.3f, 0.3f, 1);
-		} 
-		else if (newSelected == LIGHT_TOOL) {
+		switch (newSelected) {
+		case LIGHT_TOOL:
 			isSpotlight = !isSpotlight;
 			spotlight.hideProperties (!isSpotlight);
 			if (isSpotlight)
 				images [newSelected].color = new Color (1, 1, 1, 1);
 			else
 				images [newSelected].color = new Color (0.3f, 0.3f, 0.3f, 1);
-		}
-		else if (newSelected != 3 && newSelected != 5 && newSelected != 7) {
+			break;
+				
+		case INVENTORY_TOOL:
+			inventory.Show ();
+			break;
+
+		case READER_TOOL:
+			presenter.ShowAnnotations (true);
+			goto default;
+
+		case HELP_TOOL:
+			dialog.Show("Controls:" +
+				"Left/Right Arrow Keys to move Left/Right.\n" +
+				"Up/Down Arrow Keys to move Up/Down.\n" +
+				"Z/X to zoom In/Out.\n" +
+				"\n" +
+				"Buttons:\n" +
+				"Hand: Grab the pages with the cursor to turn to the next/previous page.\n" +
+				"Magnify Glass: See a transcription of the text.\n" +
+				"Note with \"A\" and +: Select a region to add an annotation to the local annotation file.\n" +
+				"Note with \"A\": View local annotations.\n" +
+				"Bird: Clicking on it shows/hides a bird. Click the bird to get the latest Tweet from our account.\n" +
+				"?: Show this help dialog.");
+			break;
+
+		case TWITTER_TOOL:
+			twitterBirdObj.SetActive (!twitterBirdObj.activeInHierarchy);
+			if (twitterBirdObj.activeInHierarchy)
+				images [newSelected].color = new Color (1, 1, 1, 1);
+			else
+				images [newSelected].color = new Color (0.3f, 0.3f, 0.3f, 1);
+			break;
+
+		default:
 			clearLast ();
 			if (selected != newSelected) {
 				selected = newSelected;
-				if (newSelected == READER_TOOL)
-					presenter.ShowAnnotations (true);
 				buttons [selected].image.color = Color.green;
 				images [selected].color = new Color (1, 1, 1, 1);
 			} else {
 				selected = -1;
 			}
-		} else {
-			switch (newSelected) {
-			case 3://Directory
-				dialog.Show("Directory to be added soon!");
-				break;
-
-			case 5://Zoom
-				dialog.Show("Zoom to be added soon!");
-				break;
-
-			case 7://Help
-				dialog.Show("Controls:" +
-					"Left/Right Arrow Keys to move Left/Right.\n" +
-					"Up/Down Arrow Keys to move Up/Down.\n" +
-					"W/S to zoom In/Out.\n" +
-					"\n" +
-					"Buttons:\n" +
-					"Hand: Grab the pages with the cursor to turn to the next/previous page.\n" +
-					"Magnify Glass: See a transcription of the text.\n" +
-					"+: Select a region to add an annotation to the local annotation file.\n" +
-					"Note with \"A\": View local annotations.\n" +
-					"Bird: Clicking on it shows/hides a bird. Click the bird to get the latest Tweet from our account.\n" +
-					"?: Show this help dialog.");
-				break;
-			}
+			break;
 		}
+
 	}
 
 	/// <summary>
@@ -261,7 +272,7 @@ public class ButtonControls : MonoBehaviour {
 	/// </summary>
 	public void ShowLatestTweet(){
 		WebClient client = new WebClient ();
-		string data = client.DownloadString ("https://twitter.com/TabulaFamae");
+		string data = client.DownloadString ("https://twitter.com/RealBookOfFame");
 		MatchCollection tweets = tweetRegex.Matches (data);
 		twitterBird.sprite = twitterBirdOpen;
 		tweetText.text = tweets[0].Groups[1].Value;
@@ -274,7 +285,7 @@ public class ButtonControls : MonoBehaviour {
 	/// Hides the tweet box.
 	/// </summary>
 	public IEnumerator HideTweetBox(){
-		yield return new WaitForSeconds (2);
+		yield return new WaitForSeconds (5);
 		twitterBird.sprite = twitterBirdClosed;
 		tweetBox.SetActive (false);
 	}

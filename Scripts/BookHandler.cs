@@ -31,14 +31,14 @@ public class BookHandler : MonoBehaviour {
 		if (ButtonControls.current.getSelected() == ButtonControls.SELECTION_TOOL && myUI.IsShowing()) {
 			foreach (Collider model in models) {
 				if (!isHit && model.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit, 1000)) {
-					if (Input.GetMouseButtonDown(0))
+					if (Input.GetMouseButtonDown (0)) {
 						animator.SetTrigger ("Grabbed");
+					}
 				}
 			}
 		}
 
-		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("OpenState") &&
-			animator.GetCurrentAnimatorStateInfo (0).normalizedTime > 0.999) {
+		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Opened")) {
 			pages.SetActive (true);
 		}
 
