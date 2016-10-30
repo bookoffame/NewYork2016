@@ -12,6 +12,7 @@ public class ImageBufferer : MonoBehaviour {
 	/// The images for the buffered pages
 	/// </summary>
 	private Texture2D[] pageImages;
+	private bool[] dirty;
 
 	/// <summary>
 	/// The manifest URL.
@@ -31,9 +32,12 @@ public class ImageBufferer : MonoBehaviour {
 
 	private int curr;
 
+	private Texture2D leftPage,rightPage;
+
 	// Use this for initialization
 	void Start () {
 		pageImages = new Texture2D[12];
+		dirty = new bool[12];
 		data = new IIIFGetManifest ();
 		pageToImage = new Hashtable();
 		for (int i = 0; i < pageImages.Length; i++) {
@@ -64,9 +68,14 @@ public class ImageBufferer : MonoBehaviour {
 		for (int i = 0; i < pageImages.Length - 2; i++){
 			pageImages [i] = pageImages [i + 2];
 		}
-			
-			StartCoroutine (LoadPage (pageImages.Length - 2));
-			StartCoroutine (LoadPage (pageImages.Length - 1));
+		MarkDirty ();
+		StartCoroutine (LoadPage (pageImages.Length - 2));
+		StartCoroutine (LoadPage (pageImages.Length - 1));
+	}
+
+	private void MarkDirty(){
+		for (int i = 0; i < dirty.Length; i++)
+			dirty [i] = true;
 	}
 
 	/// <summary>
@@ -87,9 +96,9 @@ public class ImageBufferer : MonoBehaviour {
 		for (int i = pageImages.Length - 1; i > 1; i--){
 			pageImages [i] = pageImages [i - 2];
 	    }
-			
-			StartCoroutine (LoadPage (0));
-			StartCoroutine (LoadPage (1));
+		MarkDirty ();    
+		StartCoroutine (LoadPage (0));
+		StartCoroutine (LoadPage (1));
 	}
 
 	public Texture2D GetImage(int page){
@@ -109,10 +118,10 @@ public class ImageBufferer : MonoBehaviour {
 			downloader.cropOffsetY = 210;
 			downloader.cropWidth = 2900;
 			downloader.cropHeight = 4000;
-			downloader.targetWidth = 2900;
-			downloader.targetHeight = 4000;
-			downloader.rotation = (2 >= 2)? 0 : 180;
-			downloader.mirrored = 2 % 2 == 1;
+			downloader.targetWidth = 1500;
+			downloader.targetHeight = 2305;
+			downloader.rotation = (0 >= 2)? 0 : 180;
+			downloader.mirrored = 0 % 2 == 1;
 			downloader.quality = "default";
 			downloader.format = ".jpg";
 			pageImages [(int)pageToImage[pageNum]] = loadingTexture;
@@ -129,6 +138,7 @@ public class ImageBufferer : MonoBehaviour {
 				yield break;
 			}
 			pageImages [(int)pageToImage[pageNum]] = downloader.texture;
+			dirty [(int)pageToImage[pageNum]] = true;
 			downloader.targetWidth = downloader.cropWidth;
 			downloader.targetHeight = downloader.cropHeight;
 			yield return StartCoroutine (downloader.UpdateImage ());
@@ -136,11 +146,61 @@ public class ImageBufferer : MonoBehaviour {
 				yield break;
 			}
 			pageImages [(int)pageToImage[pageNum]] = downloader.texture;
+			dirty [(int)pageToImage[pageNum]] = true;
 		} 
 		else {
 			pageImages [(int)pageToImage[pageNum]] = loadingTexture;
 		}
 	}
+
+	public Texture2D GetDualTexture(int front, int back){
+		bool isRight = front < back;
+		if (!dirty [front + OFFSET] || !dirty[back + OFFSET]) {
+			if (isRight)
+				return rightPage;
+			else
+				return leftPage;
+		}
+			
+		Texture2D left = pageImages [back + OFFSET];
+		Texture2D right = pageImages [front + OFFSET];
+		Color[] leftColors, rightColors;
+
+		if (!isRight) {
+			leftColors =  left.GetPixels();
+			rightColors = FlipColorArray(right.width, right.GetPixels());
+		} else {
+			leftColors =  FlipColorArray(left.width,left.GetPixels());
+			rightColors = right.GetPixels();
+		}
+
+		Texture2D output = new Texture2D (left.width*2,left.height + 315 + 380);
+		output.SetPixels(0, 315, left.width, left.height, leftColors);
+		output.SetPixels(left.width, 315, right.width, right.height, rightColors);
+		output.Apply ();
+
+		if (front < back)
+			rightPage = output;
+		else
+			leftPage = output;
+
+		dirty [front + OFFSET] = false;
+		dirty [back + OFFSET] = false;
+		return output;
+	}
+
+	private Color[] FlipColorArray(int width, Color[] arr){
+		for (int i = 0; i < arr.Length; i++) {
+			int other = width - (i % width) - 1;
+			if (other > (i % width)) {
+				Color temp = arr [i];
+				arr [i] = arr [i - (i % width) + other];
+				arr [i - (i % width) + other] = temp;
+			}
+		}
+		return arr;
+	}
+
 	/*void OnGUI(){
 		string output = "";
 		ArrayList list = new ArrayList ();

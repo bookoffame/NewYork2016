@@ -13,6 +13,9 @@ public class PageImages : MonoBehaviour {
 	/// </summary>
 	public Renderer[] pages;
 
+	public Renderer backLeftPage, backRightPage;
+	public Renderer leftPage, rightPage;
+
 	public ImageBufferer buffer;
 
 	private IIIFImageGet iiifImage;
@@ -76,9 +79,13 @@ public class PageImages : MonoBehaviour {
 	}
 
 	void Update(){
-		for (int i = 0; i < 6; i++) {
+		/*for (int i = 0; i < 6; i++) {
 			pages [i].material.mainTexture = buffer.GetImage(i);
-		}
+		}*/
+		backLeftPage.material.mainTexture = buffer.GetImage(0);
+		backRightPage.material.mainTexture = buffer.GetImage(5);
+		leftPage.material.mainTexture = buffer.GetDualTexture (2,1);
+		rightPage.material.mainTexture = buffer.GetDualTexture (3,4);
 	}
 
 	/// <summary>
