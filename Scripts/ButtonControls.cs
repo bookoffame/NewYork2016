@@ -155,11 +155,11 @@ public class ButtonControls : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		selected = -1;
 		for (int i = 0; i < buttons.Length; i++)
 			buttons [i].image.color = Color.cyan;
 		for (int i = 0; i < images.Length; i++)
 			images [i].color = new Color (0.3f,0.3f,0.3f,1);
+		changeSelected(SELECTION_TOOL);
 		current = this;
 		tweetRegex = new Regex ("<div class=\"js-tweet-text-container\">\\s*?<p class=\"TweetTextSize TweetTextSize--16px js-tweet-text tweet-text\" lang=\"en\" data-aria-label-part=\"0\">(.*?)<\\/p>\\s*?<\\/div>");
 	}

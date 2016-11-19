@@ -155,7 +155,7 @@ public class ImageBufferer : MonoBehaviour {
 
 	public Texture2D GetDualTexture(int front, int back){
 		bool isRight = front < back;
-		if (!dirty [front + OFFSET] || !dirty[back + OFFSET]) {
+		if (!dirty [front + OFFSET] || !dirty[back + OFFSET] || pageImages [back + OFFSET].width != pageImages [front + OFFSET].width) {
 			if (isRight)
 				return rightPage;
 			else

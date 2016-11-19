@@ -33,6 +33,7 @@ public class BookHandler : MonoBehaviour {
 				if (!isHit && model.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit, 1000)) {
 					if (Input.GetMouseButtonDown (0)) {
 						animator.SetTrigger ("Grabbed");
+						ButtonControls.current.changeSelected (ButtonControls.HAND_TOOL);
 					}
 				}
 			}
