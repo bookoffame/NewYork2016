@@ -2,8 +2,9 @@
 using System.Collections;
 
 public class Popup : MonoBehaviour {
+	public Vector3 angle = Vector3.zero;
 	public void PopupObject(){
-		StartCoroutine (MyUtils.SmoothMove (transform, transform.position, Quaternion.Euler (0, 0, 0), 4f));
+		StartCoroutine (MyUtils.SmoothMove (transform, transform.position, Quaternion.Euler (angle.x, angle.y, angle.z), 4f));
 	}
 
 	public void Reset(){
