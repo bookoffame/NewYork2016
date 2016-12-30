@@ -11,7 +11,7 @@ public class ImageBufferer : MonoBehaviour {
 	/// <summary>
 	/// The images for the buffered pages
 	/// </summary>
-	private Texture2D[] pageImages;
+	private Texture2D[,] pageImages;
 	private bool[] dirty;
 
 	/// <summary>
@@ -36,7 +36,7 @@ public class ImageBufferer : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		pageImages = new Texture2D[12];
+		pageImages = new Texture2D[12,2];
 		dirty = new bool[12];
 		data = new IIIFGetManifest ();
 		pageToImage = new Hashtable();
@@ -44,12 +44,13 @@ public class ImageBufferer : MonoBehaviour {
 		rightPage = loadingTexture;
 		backLeft = loadingTexture;
 		backRight = loadingTexture;
-		for (int i = 0; i < pageImages.Length; i++) {
-			pageImages[i] = loadingTexture;
+		for (int i = 0; i < 12; i++) {
+			pageImages[i,0] = loadingTexture;
+			pageImages[i,1] = loadingTexture;
 		}
 		curr = 72;
 		data.download(manifestURL);
-		for (int i = 0; i < pageImages.Length; i++) {
+		for (int i = 0; i < 12; i++) {
 			    StartCoroutine (LoadPage (i));
 		}
 	}
@@ -61,19 +62,20 @@ public class ImageBufferer : MonoBehaviour {
 		pageToImage.Remove (curr * 2 - 3);
 		pageToImage.Remove (curr * 2 - 2);
 
-		for (int i = 2; i < pageImages.Length; i++){
+		for (int i = 2; i < 12; i++){
 			if (pageToImage.ContainsKey (curr * 2 - 3 + i))
 				pageToImage[curr * 2 - 3 + i] = i - 2;
 		}
 
 		curr++;
 
-		for (int i = 0; i < pageImages.Length - 2; i++){
-			pageImages [i] = pageImages [i + 2];
+		for (int i = 0; i < 12 - 2; i++){
+			pageImages [i,0] = pageImages [i + 2,0];
+			pageImages [i,1] = pageImages [i + 2,1];
 		}
 		MarkDirty ();
-		StartCoroutine (LoadPage (pageImages.Length - 2));
-		StartCoroutine (LoadPage (pageImages.Length - 1));
+		StartCoroutine (LoadPage (12 - 2));
+		StartCoroutine (LoadPage (12 - 1));
 	}
 
 	private void MarkDirty(){
@@ -85,26 +87,30 @@ public class ImageBufferer : MonoBehaviour {
 	/// Shifts page's textures to the right and loads the previous two pages.
 	/// </summary>
 	public void TurnPageRight(){
-		pageToImage.Remove (curr * 2 - 4 + pageImages.Length);
-		pageToImage.Remove (curr * 2 - 5 + pageImages.Length);
+		pageToImage.Remove (curr * 2 - 4 + 12);
+		pageToImage.Remove (curr * 2 - 5 + 12);
 
-		for (int i = 0; i < pageImages.Length - 2; i++) {
+		for (int i = 0; i < 12 - 2; i++) {
 			if (pageToImage.ContainsKey (curr * 2 - 3 + i))
 				pageToImage [curr * 2 - 3 + i] = i + 2;
 		}
 
 		curr--;
 
-		for (int i = pageImages.Length - 1; i > 1; i--){
-			pageImages [i] = pageImages [i - 2];
+		for (int i = 12 - 1; i > 1; i--){
+			pageImages [i,0] = pageImages [i - 2,0];
+			pageImages [i,1] = pageImages [i - 2,1];
 	    }
 		MarkDirty ();    
 		StartCoroutine (LoadPage (0));
 		StartCoroutine (LoadPage (1));
 	}
 
-	public Texture2D GetImage(int page){
-		return pageImages [page + OFFSET];
+	public Texture2D GetImage(int page, bool flipped){
+		if (flipped)
+			return pageImages [page + OFFSET,1];
+		else
+		    return pageImages [page + OFFSET,0];
 	}
 
 	public string GetURL(int pageNum){
@@ -123,10 +129,11 @@ public class ImageBufferer : MonoBehaviour {
 			downloader.targetWidth = 1500;
 			downloader.targetHeight = 2305;
 			downloader.rotation = (0 >= 2)? 0 : 180;
-			downloader.mirrored = 0 % 2 == 1;
+			downloader.mirrored = false;
 			downloader.quality = "default";
 			downloader.format = ".jpg";
-			pageImages [(int)pageToImage[pageNum]] = loadingTexture;
+			pageImages [(int)pageToImage[pageNum],0] = loadingTexture;
+			pageImages [(int)pageToImage[pageNum],1] = loadingTexture;
 			if (pageNum % 2 == 1) {
 				downloader.cropOffsetX = 175;
 			} else {
@@ -135,27 +142,42 @@ public class ImageBufferer : MonoBehaviour {
 			downloader.changeAddress (data.getPage (pageNum));
 			downloader.targetWidth = downloader.cropWidth/2;
 			downloader.targetHeight = downloader.cropHeight/2;
+
 			yield return StartCoroutine (downloader.UpdateImage ());
 			if (!pageToImage.Contains(pageNum)) {
 				yield break;
 			}
-			pageImages [(int)pageToImage[pageNum]] = downloader.texture;
-			dirty [(int)pageToImage[pageNum]] = true;
+			pageImages [(int)pageToImage[pageNum],0] = downloader.texture;
+			downloader.mirrored = true;
+			yield return StartCoroutine (downloader.UpdateImage ());
+			if (!pageToImage.Contains(pageNum)) {
+				yield break;
+			}
+			pageImages [(int)pageToImage[pageNum],1] = downloader.texture;
+			downloader.mirrored = false;
+
 			downloader.targetWidth = downloader.cropWidth;
 			downloader.targetHeight = downloader.cropHeight;
 			yield return StartCoroutine (downloader.UpdateImage ());
 			if (!pageToImage.Contains(pageNum)) {
 				yield break;
 			}
-			pageImages [(int)pageToImage[pageNum]] = downloader.texture;
-			dirty [(int)pageToImage[pageNum]] = true;
+			pageImages [(int)pageToImage[pageNum],0] = downloader.texture;
+
+			downloader.mirrored = true;
+			yield return StartCoroutine (downloader.UpdateImage ());
+			if (!pageToImage.Contains(pageNum)) {
+				yield break;
+			}
+			pageImages [(int)pageToImage[pageNum],1] = downloader.texture;
 		} 
 		else {
-			pageImages [(int)pageToImage[pageNum]] = loadingTexture;
+			pageImages [(int)pageToImage[pageNum],0] = loadingTexture;
+			pageImages [(int)pageToImage[pageNum],1] = loadingTexture;
 		}
 	}
 
-	public Texture2D GetDualTexture(int front, int back){
+	/*public Texture2D GetDualTexture(int front, int back){
 		front = (int)(pageToImage [front]);
 		back = (int)(pageToImage [back]);
 		bool isRight = front > back;
@@ -225,7 +247,7 @@ public class ImageBufferer : MonoBehaviour {
 			}
 		}
 		return arr;
-	}
+	}/*
 
 	/*void OnGUI(){
 		string output = "";

@@ -13,9 +13,6 @@ public class PageImages : MonoBehaviour {
 	/// </summary>
 	public Renderer[] pages;
 
-	public Renderer backLeftPage, backRightPage;
-	public Renderer leftPage, rightPage;
-
 	public ImageBufferer buffer;
 
 	private IIIFImageGet iiifImage;
@@ -65,8 +62,13 @@ public class PageImages : MonoBehaviour {
 	{
 		for (int i = 0; i < 6; i++) {
 			pages [i].enabled = true;
-			pages [i].material.mainTexture = buffer.GetImage(i);
 		}
+		pages [0].material.mainTexture = buffer.GetImage(0,true);
+		pages [1].material.mainTexture = buffer.GetImage(1,false);
+		pages [2].material.mainTexture = buffer.GetImage(2,true);
+		pages [3].material.mainTexture = buffer.GetImage(3,false);
+		pages [4].material.mainTexture = buffer.GetImage(4,true);
+		pages [5].material.mainTexture = buffer.GetImage(5,false);
 		curr = 73;
 		annotation [0].UpdateWebAddress (iiifImage.removeTail(buffer.GetURL(curr*2 - 1)));
 		annotation [1].UpdateWebAddress (iiifImage.removeTail(buffer.GetURL(curr*2)));
@@ -79,13 +81,12 @@ public class PageImages : MonoBehaviour {
 	}
 
 	void Update(){
-		/*for (int i = 0; i < 6; i++) {
-			pages [i].material.mainTexture = buffer.GetImage(i);
-		}*/
-		backLeftPage.material.mainTexture = buffer.GetDualTexture(curr*2 - 3,curr*2 - 3);
-		backRightPage.material.mainTexture = buffer.GetDualTexture(curr*2 + 2,curr*2 + 2);
-		leftPage.material.mainTexture = buffer.GetDualTexture (curr*2 - 1,curr*2 - 2);
-		rightPage.material.mainTexture = buffer.GetDualTexture (curr*2,curr*2 + 1);
+		pages [0].material.mainTexture = buffer.GetImage(0,true);
+		pages [1].material.mainTexture = buffer.GetImage(1,false);
+		pages [2].material.mainTexture = buffer.GetImage(2,true);
+		pages [3].material.mainTexture = buffer.GetImage(3,false);
+		pages [4].material.mainTexture = buffer.GetImage(4,true);
+		pages [5].material.mainTexture = buffer.GetImage(5,false);
 	}
 
 	/// <summary>
