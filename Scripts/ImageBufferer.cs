@@ -32,7 +32,7 @@ public class ImageBufferer : MonoBehaviour {
 
 	private int curr;
 
-	private Texture2D leftPage,rightPage;
+	private Texture2D leftPage,rightPage,backLeft,backRight;
 
 	// Use this for initialization
 	void Start () {
@@ -40,6 +40,10 @@ public class ImageBufferer : MonoBehaviour {
 		dirty = new bool[12];
 		data = new IIIFGetManifest ();
 		pageToImage = new Hashtable();
+		leftPage = loadingTexture;
+		rightPage = loadingTexture;
+		backLeft = loadingTexture;
+		backRight = loadingTexture;
 		for (int i = 0; i < pageImages.Length; i++) {
 			pageImages[i] = loadingTexture;
 		}
@@ -54,7 +58,6 @@ public class ImageBufferer : MonoBehaviour {
 	/// Shifts page's textures to the left and loads the next two pages.
 	/// </summary>
 	public void TurnPageLeft(){
-		
 		pageToImage.Remove (curr * 2 - 3);
 		pageToImage.Remove (curr * 2 - 2);
 
@@ -82,7 +85,6 @@ public class ImageBufferer : MonoBehaviour {
 	/// Shifts page's textures to the right and loads the previous two pages.
 	/// </summary>
 	public void TurnPageRight(){
-		
 		pageToImage.Remove (curr * 2 - 4 + pageImages.Length);
 		pageToImage.Remove (curr * 2 - 5 + pageImages.Length);
 
@@ -154,24 +156,42 @@ public class ImageBufferer : MonoBehaviour {
 	}
 
 	public Texture2D GetDualTexture(int front, int back){
-		bool isRight = front < back;
-		if (!dirty [front + OFFSET] || !dirty[back + OFFSET] || pageImages [back + OFFSET].width != pageImages [front + OFFSET].width) {
+		front = (int)(pageToImage [front]);
+		back = (int)(pageToImage [back]);
+		bool isRight = front > back;
+		if (!dirty [front] || !dirty[back] || pageImages [back].width != pageImages [front].width) {
+			if (front == back) {
+				if (front == OFFSET)
+					return backLeft;
+				else
+					return backRight;
+			}
 			if (isRight)
 				return rightPage;
 			else
 				return leftPage;
 		}
 			
-		Texture2D left = pageImages [back + OFFSET];
-		Texture2D right = pageImages [front + OFFSET];
+		Texture2D left = pageImages [back];
+		Texture2D right = pageImages [front];
 		Color[] leftColors, rightColors;
 
-		if (!isRight) {
-			leftColors =  left.GetPixels();
-			rightColors = FlipColorArray(right.width, right.GetPixels());
+		if (front != back) {
+			if (isRight) {
+				leftColors = left.GetPixels ();
+				rightColors = FlipColorArray (right.width, right.GetPixels ());
+			} else {
+				leftColors = FlipColorArray (left.width, left.GetPixels ());
+				rightColors = right.GetPixels ();
+			}
 		} else {
-			leftColors =  FlipColorArray(left.width,left.GetPixels());
-			rightColors = right.GetPixels();
+			if (front == OFFSET) {
+				backLeft = left;
+				return left;
+			} else {
+				backRight = right;
+				return right;
+			}
 		}
 
 		Texture2D output = new Texture2D (left.width*2,left.height + 315 + 380);
@@ -179,13 +199,19 @@ public class ImageBufferer : MonoBehaviour {
 		output.SetPixels(left.width, 315, right.width, right.height, rightColors);
 		output.Apply ();
 
-		if (front < back)
-			rightPage = output;
-		else
-			leftPage = output;
-
-		dirty [front + OFFSET] = false;
-		dirty [back + OFFSET] = false;
+		if (front == back) {
+			if (front == OFFSET)
+				backLeft = output;
+			else
+				backRight = output;
+		} else {
+			if (isRight)
+				rightPage = output;
+			else
+				leftPage = output;
+		}
+		dirty [front] = false;
+		dirty [back] = false;
 		return output;
 	}
 

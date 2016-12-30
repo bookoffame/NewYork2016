@@ -13,7 +13,7 @@ public class BookHandler : MonoBehaviour {
 	/// <summary>
 	/// The pages of the book.
 	/// </summary>
-	public GameObject pages;
+	public GameObject[] pages;
 
 	/// <summary>
 	/// The Colliders for the front and back covers of the book.
@@ -40,11 +40,13 @@ public class BookHandler : MonoBehaviour {
 		}
 
 		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Opened")) {
-			pages.SetActive (true);
+			foreach (GameObject page in pages)
+			    page.SetActive (true);
 		}
 
 		else if (animator.GetCurrentAnimatorStateInfo (0).IsName ("CloseState")) {
-			pages.SetActive (false);
+			foreach (GameObject page in pages)
+				page.SetActive (false);
 		}
 	}
 }

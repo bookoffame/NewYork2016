@@ -36,12 +36,13 @@ public class HandOnPage : MonoBehaviour {
 	public Renderer[] others;
 
 	private float lastPos;
-	private bool released;
+	private bool released,canLoadPages;
 
 	void Start()
 	{
 		lastPos = 0;
 		released = false;
+		canLoadPages = true;
 	}
 
 	// Update is called once per frame
@@ -56,7 +57,6 @@ public class HandOnPage : MonoBehaviour {
 			    animator.SetFloat ("HandMovement", movement);
 		}
 		RaycastHit hit;
-
 			
 		if (hand && Input.GetMouseButtonDown (0) &&
 			animator.GetCurrentAnimatorStateInfo (0).IsName ("Opened")) {
@@ -66,6 +66,7 @@ public class HandOnPage : MonoBehaviour {
 				else
 					animator.SetTrigger ("TurnRight");
 				released = false;
+				canLoadPages = true;
 			}
 		} else if (Input.GetMouseButtonUp (0) && isPageTurning()) {
 			released = true;
@@ -74,9 +75,11 @@ public class HandOnPage : MonoBehaviour {
 			else
 				animator.SetFloat ("HandMovement", 5);
 		} else if (!Input.GetMouseButton (0) && isPageTurning()) {
-			if (animator.GetCurrentAnimatorStateInfo (0).normalizedTime > 0.95) {
+			released = true;
+			if (animator.GetCurrentAnimatorStateInfo (0).normalizedTime > 0.95 && canLoadPages) {
 				loadPages ();
 				animator.SetTrigger ("Released");
+				canLoadPages = false;
 			} else if (animator.GetCurrentAnimatorStateInfo (0).normalizedTime < 0.05) {
 				animator.SetTrigger ("Released");
 			}

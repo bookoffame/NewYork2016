@@ -82,10 +82,10 @@ public class PageImages : MonoBehaviour {
 		/*for (int i = 0; i < 6; i++) {
 			pages [i].material.mainTexture = buffer.GetImage(i);
 		}*/
-		backLeftPage.material.mainTexture = buffer.GetImage(0);
-		backRightPage.material.mainTexture = buffer.GetImage(5);
-		leftPage.material.mainTexture = buffer.GetDualTexture (2,1);
-		rightPage.material.mainTexture = buffer.GetDualTexture (3,4);
+		backLeftPage.material.mainTexture = buffer.GetDualTexture(curr*2 - 3,curr*2 - 3);
+		backRightPage.material.mainTexture = buffer.GetDualTexture(curr*2 + 2,curr*2 + 2);
+		leftPage.material.mainTexture = buffer.GetDualTexture (curr*2 - 1,curr*2 - 2);
+		rightPage.material.mainTexture = buffer.GetDualTexture (curr*2,curr*2 + 1);
 	}
 
 	/// <summary>
