@@ -27,6 +27,7 @@ public class ImageBufferer : MonoBehaviour {
 	private IIIFGetManifest data;
 
 	private const int OFFSET = 2;
+	private const int SIZE = 12;
 
 	private Hashtable pageToImage;
 
@@ -36,22 +37,23 @@ public class ImageBufferer : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		pageImages = new Texture2D[12,2];
-		dirty = new bool[12];
+		pageImages = new Texture2D[SIZE,2];
+		dirty = new bool[SIZE];
 		data = new IIIFGetManifest ();
 		pageToImage = new Hashtable();
 		leftPage = loadingTexture;
 		rightPage = loadingTexture;
 		backLeft = loadingTexture;
 		backRight = loadingTexture;
-		for (int i = 0; i < 12; i++) {
+		for (int i = 0; i < SIZE; i++) {
 			pageImages[i,0] = loadingTexture;
 			pageImages[i,1] = loadingTexture;
 		}
 		curr = 72;
 		data.download(manifestURL);
-		for (int i = 0; i < 12; i++) {
-			    StartCoroutine (LoadPage (i));
+		for (int i = 0; i < SIZE; i++) {
+			StartCoroutine (LoadPage (i,0));
+			StartCoroutine (LoadPage (i,1));
 		}
 	}
 
@@ -62,25 +64,40 @@ public class ImageBufferer : MonoBehaviour {
 		pageToImage.Remove (curr * 2 - 3);
 		pageToImage.Remove (curr * 2 - 2);
 
-		for (int i = 2; i < 12; i++){
+		for (int i = 2; i < SIZE; i++){
 			if (pageToImage.ContainsKey (curr * 2 - 3 + i))
 				pageToImage[curr * 2 - 3 + i] = i - 2;
 		}
 
 		curr++;
 
-		for (int i = 0; i < 12 - 2; i++){
+		for (int i = 0; i < SIZE - 2; i++){
 			pageImages [i,0] = pageImages [i + 2,0];
 			pageImages [i,1] = pageImages [i + 2,1];
 		}
 		MarkDirty ();
-		StartCoroutine (LoadPage (12 - 2));
-		StartCoroutine (LoadPage (12 - 1));
+		StartCoroutine (LoadPage (SIZE - 2,0));
+		StartCoroutine (LoadPage (SIZE - 1,0));
+		StartCoroutine (LoadPage (SIZE - 2,1));
+		StartCoroutine (LoadPage (SIZE - 1,1));
 	}
 
 	private void MarkDirty(){
-		for (int i = 0; i < dirty.Length; i++)
+		for (int i = 0; i < SIZE; i++)
 			dirty [i] = true;
+	}
+
+	public void GotoPage(int pageNum){
+		pageToImage.Clear ();
+		for (int i = 0; i < SIZE; i++) {
+			pageImages[i,0] = loadingTexture;
+			pageImages[i,1] = loadingTexture;
+		}
+		curr = pageNum;
+		for (int i = 0; i < SIZE; i++) {
+			StartCoroutine (LoadPage (i,0));
+			StartCoroutine (LoadPage (i,1));
+		}
 	}
 
 	/// <summary>
@@ -90,20 +107,22 @@ public class ImageBufferer : MonoBehaviour {
 		pageToImage.Remove (curr * 2 - 4 + 12);
 		pageToImage.Remove (curr * 2 - 5 + 12);
 
-		for (int i = 0; i < 12 - 2; i++) {
+		for (int i = 0; i < SIZE - 2; i++) {
 			if (pageToImage.ContainsKey (curr * 2 - 3 + i))
 				pageToImage [curr * 2 - 3 + i] = i + 2;
 		}
 
 		curr--;
 
-		for (int i = 12 - 1; i > 1; i--){
+		for (int i = SIZE - 1; i > 1; i--){
 			pageImages [i,0] = pageImages [i - 2,0];
 			pageImages [i,1] = pageImages [i - 2,1];
 	    }
 		MarkDirty ();    
-		StartCoroutine (LoadPage (0));
-		StartCoroutine (LoadPage (1));
+		StartCoroutine (LoadPage (0,0));
+		StartCoroutine (LoadPage (1,0));
+		StartCoroutine (LoadPage (0,1));
+		StartCoroutine (LoadPage (1,1));
 	}
 
 	public Texture2D GetImage(int page, bool flipped){
@@ -117,7 +136,7 @@ public class ImageBufferer : MonoBehaviour {
 		return data.getPage (pageNum);
 	}
 
-	private IEnumerator LoadPage(int image)
+	private IEnumerator LoadPage(int image, int flipped)
 	{
 		int pageNum = curr * 2 - 3 + image;
 		pageToImage [pageNum] = image;
@@ -129,11 +148,10 @@ public class ImageBufferer : MonoBehaviour {
 			downloader.targetWidth = 1500;
 			downloader.targetHeight = 2305;
 			downloader.rotation = (0 >= 2)? 0 : 180;
-			downloader.mirrored = false;
+			downloader.mirrored = flipped == 1;
 			downloader.quality = "default";
 			downloader.format = ".jpg";
-			pageImages [(int)pageToImage[pageNum],0] = loadingTexture;
-			pageImages [(int)pageToImage[pageNum],1] = loadingTexture;
+			pageImages [(int)pageToImage[pageNum],flipped] = loadingTexture;
 			if (pageNum % 2 == 1) {
 				downloader.cropOffsetX = 175;
 			} else {
@@ -147,14 +165,7 @@ public class ImageBufferer : MonoBehaviour {
 			if (!pageToImage.Contains(pageNum)) {
 				yield break;
 			}
-			pageImages [(int)pageToImage[pageNum],0] = downloader.texture;
-			downloader.mirrored = true;
-			yield return StartCoroutine (downloader.UpdateImage ());
-			if (!pageToImage.Contains(pageNum)) {
-				yield break;
-			}
-			pageImages [(int)pageToImage[pageNum],1] = downloader.texture;
-			downloader.mirrored = false;
+			pageImages [(int)pageToImage[pageNum],flipped] = downloader.texture;
 
 			downloader.targetWidth = downloader.cropWidth;
 			downloader.targetHeight = downloader.cropHeight;
@@ -162,18 +173,10 @@ public class ImageBufferer : MonoBehaviour {
 			if (!pageToImage.Contains(pageNum)) {
 				yield break;
 			}
-			pageImages [(int)pageToImage[pageNum],0] = downloader.texture;
-
-			downloader.mirrored = true;
-			yield return StartCoroutine (downloader.UpdateImage ());
-			if (!pageToImage.Contains(pageNum)) {
-				yield break;
-			}
-			pageImages [(int)pageToImage[pageNum],1] = downloader.texture;
+			pageImages [(int)pageToImage[pageNum],flipped] = downloader.texture;
 		} 
 		else {
-			pageImages [(int)pageToImage[pageNum],0] = loadingTexture;
-			pageImages [(int)pageToImage[pageNum],1] = loadingTexture;
+			pageImages [(int)pageToImage[pageNum],flipped] = loadingTexture;
 		}
 	}
 

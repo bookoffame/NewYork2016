@@ -8,21 +8,24 @@ public class PopupTheatre : MonoBehaviour {
 	public Move cameraControls;
 	public Transform normalPos, popupPos, popupCameraPos;
 	public Popup[] popups;
+	public Animator animator;
 	private Vector3 oldCameraPos = Vector3.zero;
 	private Quaternion oldCameraRot = Quaternion.identity;
 
-	public void SetupPopupTheatre(){
+	public IEnumerator SetupPopupTheatre(){
 		otherStuff.SetActive (false);
 		light.SetActive (true);
+		if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
+			yield return new WaitWhile (() => animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f);
 		StartCoroutine(MyUtils.SmoothMove (transform, normalPos, popupPos, 5f));
 		oldCameraPos = myCamera.transform.position;
 		oldCameraRot = myCamera.transform.rotation;
 		cameraControls.setActivated (false);
 		StartCoroutine(MyUtils.SmoothMove (myCamera.transform, popupCameraPos, 5f));
-		StartCoroutine(PopupSprites());
+		yield return StartCoroutine(PopupSprites());
 	}
 
-	public void LeavePopupTheatre(){
+	public IEnumerator LeavePopupTheatre(){
 		foreach (Popup p in popups)
 			p.Reset ();
 		light.SetActive (false);
@@ -30,7 +33,7 @@ public class PopupTheatre : MonoBehaviour {
 		theatre.SetActive (false);
 		cameraControls.setActivated (true);
 		StartCoroutine (MyUtils.SmoothMove (transform, popupPos, normalPos, 5f));
-		StartCoroutine (MyUtils.SmoothMove (myCamera.transform, oldCameraPos, oldCameraRot, 5f));
+		yield return StartCoroutine (MyUtils.SmoothMove (myCamera.transform, oldCameraPos, oldCameraRot, 5f));
 	}
 
 	private IEnumerator PopupSprites()

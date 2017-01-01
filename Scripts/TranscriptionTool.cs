@@ -62,7 +62,7 @@ public class TranscriptionTool : MonoBehaviour {
 	void Update(){
 		Vector3 myTopLeft = Camera.main.WorldToScreenPoint (topLeft.position);
 		Vector3 myBottomRight = Camera.main.WorldToScreenPoint (bottomRight.position);
-		Vector3 offset = new Vector3 (-0.00f * Screen.width, 0.15f * Screen.height, 0);
+		Vector3 offset = new Vector3 (-0.00f * Screen.width, 0.11f * Screen.height, 0);
 
 		myTopLeft.y = Screen.height - myTopLeft.y;
 		myBottomRight.y = Screen.height - myBottomRight.y;
@@ -73,13 +73,13 @@ public class TranscriptionTool : MonoBehaviour {
 		for (int i = 0; i < boxes.Length; i++) {
 			Rect pos = new Rect (
 				myTopLeft.x + myWidth*boxes[i].x,
-				myTopLeft.y + 1.02f*myHeight*boxes[i].y,
+				myTopLeft.y + myHeight*boxes[i].y,
 				myWidth * boxes[i].w * 1.15f,
 				myHeight * boxes[i].h);
 
 			Vector3 location = new Vector3 (pos.x, Screen.height - pos.y);
 
-			annotations [i].localPosition = 1.2f*location - transform.position*1.32f + offset;
+			annotations [i].localPosition = 1.2f*location - transform.position*1.3f + offset;
 			Vector2 size = new Vector2 (pos.width * 1.6f, pos.height * 1.6f);
 			annotations[i].sizeDelta = size;
 		}

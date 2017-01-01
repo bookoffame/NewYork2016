@@ -25,6 +25,8 @@ public class BookHandler : MonoBehaviour {
 	/// </summary>
 	public UIPopUp myUI;
 
+	public AudioSource sound;
+
 	void Update () {
 		RaycastHit hit;
 		bool isHit = false;
@@ -33,6 +35,7 @@ public class BookHandler : MonoBehaviour {
 				if (!isHit && model.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit, 1000)) {
 					if (Input.GetMouseButtonDown (0)) {
 						animator.SetTrigger ("Grabbed");
+						sound.Play ();
 						ButtonControls.current.changeSelected (ButtonControls.HAND_TOOL);
 					}
 				}

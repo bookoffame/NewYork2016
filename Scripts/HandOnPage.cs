@@ -35,6 +35,7 @@ public class HandOnPage : MonoBehaviour {
 	/// </summary>
 	public Renderer[] others;
 
+	public AudioSource sound;
 	private float lastPos;
 	private bool released,canLoadPages;
 
@@ -49,13 +50,13 @@ public class HandOnPage : MonoBehaviour {
 	void Update () {
 		bool hand = ButtonControls.current.getSelected () == ButtonControls.HAND_TOOL;
 		if (isPageTurning ()) {
-			float movement = Screen.width*((Input.mousePosition.x - lastPos)/pageWidth);
+			float movement = Screen.width * ((Input.mousePosition.x - lastPos) / pageWidth);
 			lastPos = Input.mousePosition.x;
 			if (isRight)
 				movement = -movement;
 			if (!released)
-			    animator.SetFloat ("HandMovement", movement);
-		}
+				animator.SetFloat ("HandMovement", movement);
+		} 
 		RaycastHit hit;
 			
 		if (hand && Input.GetMouseButtonDown (0) &&
@@ -70,6 +71,7 @@ public class HandOnPage : MonoBehaviour {
 			}
 		} else if (Input.GetMouseButtonUp (0) && isPageTurning()) {
 			released = true;
+			sound.Play ();
 			if (animator.GetCurrentAnimatorStateInfo (0).normalizedTime < 0.5)
 				animator.SetFloat ("HandMovement", -5);
 			else
