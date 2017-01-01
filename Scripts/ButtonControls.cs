@@ -153,8 +153,11 @@ public class ButtonControls : MonoBehaviour {
 	/// </summary>
 	public const int TWITTER_TOOL = 9;
 
+	private bool locked;
+
 	// Use this for initialization
 	void Start () {
+		locked = false;
 		for (int i = 0; i < buttons.Length; i++)
 			buttons [i].image.color = Color.cyan;
 		for (int i = 0; i < images.Length; i++)
@@ -204,6 +207,8 @@ public class ButtonControls : MonoBehaviour {
 	/// </summary>
 	/// <param name="newSelected">The tool to select.</param>
 	public void changeSelected(int newSelected){
+		if (locked)
+			return;
 		switch (newSelected) {
 		case LIGHT_TOOL:
 			isSpotlight = !isSpotlight;
@@ -288,6 +293,10 @@ public class ButtonControls : MonoBehaviour {
 		yield return new WaitForSeconds (5);
 		twitterBird.sprite = twitterBirdClosed;
 		tweetBox.SetActive (false);
+	}
+
+	public void setLocked(bool isLocked){
+		locked = isLocked;
 	}
 
 	private void clearLast()
