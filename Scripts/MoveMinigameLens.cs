@@ -9,32 +9,19 @@ public class MoveMinigameLens : MonoBehaviour
 	/// </summary>
 	public Image lensImg;
 
+	private Bug myBug;
+
 	void Update () {
 		lensImg.enabled = ButtonControls.current.getSelected () == ButtonControls.MINI_GAME_LENS_TOOL;
 		transform.position = Input.mousePosition;
-	}
+		Ray r = Camera.main.ScreenPointToRay (Input.mousePosition);
+		RaycastHit[] hits = Physics.RaycastAll (r);
 
-	void OnTriggerEnter2D(Collider2D other) {
-		if (lensImg.enabled) {
-			Bug bug = other.gameObject.GetComponent<Bug> ();
-			if (bug != null) {
-				bug.Show ();
-			}
-		}
-	}
-
-	void OnTriggerExit2D(Collider2D other) {
-		Bug bug = other.gameObject.GetComponent<Bug> ();
-		if (bug != null) {
-			bug.Hide ();
-		}
-	}
-
-	void OnTriggerStay2D(Collider2D other) {
-		Bug bug = other.gameObject.GetComponent<Bug> ();
-		if (bug != null) {
-			if (!lensImg.enabled) {
-				bug.Hide ();
+		foreach (RaycastHit info in hits) {
+			Debug.Log ("Hit " + info.collider.gameObject.name);
+			myBug = info.collider.gameObject.GetComponent<Bug> ();
+			if (myBug) {
+				myBug.Show ();
 			}
 		}
 	}

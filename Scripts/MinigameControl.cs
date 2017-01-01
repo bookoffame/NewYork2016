@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.IO;
 
@@ -10,6 +11,8 @@ public class MinigameControl : MonoBehaviour {
 	public ButtonControls controls;
 	public HandOnPage left, right;
 	public Bug bug;
+	public SpriteRenderer leftLock, rightLock;
+
 
 	private int state, frameCount;
 	private bool inDialog;
@@ -23,6 +26,8 @@ public class MinigameControl : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (!pageImages.OnPage (84))
+		    bug.Hide ();
 		switch (state) {
 		case 0://Reached Page
 			if (pageImages.OnPage (84)) {
@@ -71,6 +76,17 @@ public class MinigameControl : MonoBehaviour {
 			break;
 
 		case 6://Used Flashlight
+			if (pageImages.OnPage (84)) {
+				left.enabled = false;
+				right.enabled = false;
+				leftLock.enabled = true;
+				rightLock.enabled = true;
+			} else {
+				left.enabled = true;
+				right.enabled = true;
+				leftLock.enabled = false;
+				rightLock.enabled = false;
+			}
 			if (!inDialog && controls.isSpotlight) {
 				StartCoroutine (ShowDialog ("OnUsedFlashlight"));
 				state = 7;

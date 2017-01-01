@@ -126,6 +126,7 @@ public class ImageBufferer : MonoBehaviour {
 	}
 
 	public Texture2D GetImage(int page, bool flipped){
+		return loadingTexture;
 		if (flipped)
 			return pageImages [page + OFFSET,1];
 		else
