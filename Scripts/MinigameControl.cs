@@ -20,13 +20,14 @@ public class MinigameControl : MonoBehaviour {
 	void Update () {
 		if (!reachedPage) {
 			if (pageImages.OnPage (84)) {
-				StartCoroutine(PlayCutscene("Test"));
+				StartCoroutine(ShowDialog("OnPageEnter"));
 				reachedPage = true;
 			}
 		}
 	}
 
 	private IEnumerator PlayCutscene(string cutscene){
+		int tool = controls.getSelected ();
 		controls.clearSelected ();
 		StartCoroutine(MusicControl.controller.ChangeSong(MusicControl.controller.COURT_MUSIC));
 		yield return StartCoroutine(theatre.SetupPopupTheatre ());
@@ -43,5 +44,22 @@ public class MinigameControl : MonoBehaviour {
 		}
 		StartCoroutine(MusicControl.controller.ChangeSong(MusicControl.controller.MINIGAME_MUSIC));
 		yield return StartCoroutine(theatre.LeavePopupTheatre());
+		controls.changeSelected (tool);
+	}
+
+	private IEnumerator ShowDialog(string dialog){
+		int tool = controls.getSelected ();
+		controls.clearSelected ();
+		string data = Resources.Load<TextAsset> ("Dialog/" + dialog).text;
+		string[] lines = data.Split(new string[]{"\n\n"},System.StringSplitOptions.None);
+
+		for (int i = 0; i < lines.Length; i++) {
+			string name = lines [i].Substring (0, lines [i].IndexOf (":"));
+			string image = lines [i].Substring (lines [i].IndexOf (":")+1,lines [i].IndexOf("\n") - lines [i].IndexOf (":") - 1);
+			string text = lines [i].Substring (lines [i].IndexOf ("\n") + 1);
+			yield return StartCoroutine(cutsceneDialog.ShowDialog (Resources.Load<Sprite> ("Portraits/" + image),text));
+			yield return new WaitForSeconds (0.5f);
+		}
+		controls.changeSelected (tool);
 	}
 }
