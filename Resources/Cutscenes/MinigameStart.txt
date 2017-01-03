@@ -1,12 +1,3 @@
-Worm:WormA
-WHAT? You again?! Can't you just leave well enough alone? Why I oughtta...
-
-Worm Queen:WormQueenB
-SILENCE IN MY COURTROOM!
-
-Worm:WormB
-Oh jeez, now youz gone upset the Queen. Don't say I din't warn ya!
-
 Worm Queen:WormQueenA
 Who dares trespass upon my realm?!
 
@@ -43,6 +34,9 @@ Worm Queen:WormQueenA
 Ugh, fine then, not death. But don't think you're off the hook just yet! I have a
 game in mind from which there is no escape. Minions: secure the realm!
 
+Lock Book:true
+//Worms appears on book
+
 Worm Queen:WormQueenA
 I will grant you both your freedom and your life if you can tell me what thing it is that women
 most desire.
@@ -71,8 +65,14 @@ realm for the word that will buy your freedom, if you return to this courtroom a
 your time is up. Of course, should you fail to find this word, well... I can assure you, your time
 will be up. What sayst thou?
 
+Choice:22,20
+Will you play the Queen's game?
+
 Eagle:GoldenEagleB
 Listen: I don't want to waste time on this worm either, but what other option do you have?
+
+Choice:22,20
+Will you play the Queen's game?
 
 Worm Queen:WormQueenA
 Good. Perhaps there is hope for you yet. Let the game begin!

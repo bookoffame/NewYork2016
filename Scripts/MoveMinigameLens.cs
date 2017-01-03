@@ -18,7 +18,6 @@ public class MoveMinigameLens : MonoBehaviour
 		RaycastHit[] hits = Physics.RaycastAll (r);
 
 		foreach (RaycastHit info in hits) {
-			Debug.Log ("Hit " + info.collider.gameObject.name);
 			myBug = info.collider.gameObject.GetComponent<Bug> ();
 			if (myBug) {
 				myBug.Show ();

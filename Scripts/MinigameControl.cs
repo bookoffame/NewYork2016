@@ -11,23 +11,31 @@ public class MinigameControl : MonoBehaviour {
 	public ButtonControls controls;
 	public HandOnPage left, right;
 	public Bug bug;
-	public SpriteRenderer leftLock, rightLock;
+	public SpriteRenderer leftLock, rightLock,bugImg;
+	public YesNoDialog yesNoDialog;
 
 
 	private int state, frameCount;
 	private bool inDialog;
+	private SpriteRenderer bugRenderer;
+	private bool done, result;
+	private int newI;
 
 	// Use this for initialization
 	void Start () {
 		state = 0;
 		frameCount = 0;
 		inDialog = false;
+		bugRenderer = bug.gameObject.GetComponent<SpriteRenderer> ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (!pageImages.OnPage (84))
-		    bug.Hide ();
+		bug.enabled = pageImages.OnPage (84);
+		if (!bug.enabled) {
+			bug.Hide ();
+			bugRenderer.color = new Color (bugRenderer.color.r,bugRenderer.color.g,bugRenderer.color.b,0f);
+		}
 		switch (state) {
 		case 0://Reached Page
 			if (pageImages.OnPage (84)) {
@@ -56,26 +64,39 @@ public class MinigameControl : MonoBehaviour {
 
 		case 3://Used Magic once
 			if (bug.IsShowing () && Input.GetMouseButtonDown (0) && !inDialog) {
+				bugImg.enabled = true;
 				StartCoroutine (ShowDialog ("OnFirstMagicUse"));
 				state = 4;
 			}
 			break;
 
 		case 4://Used Magic twice (minigame start)
+			if (!inDialog)
+				bugImg.enabled = false;
+				
 			if (bug.IsShowing () && Input.GetMouseButtonDown (0) && !inDialog) {
-				StartCoroutine (PlayCutscene ("MinigameStart"));
+				bugImg.enabled = true;
+				StartCoroutine (ShowDialog ("OnSecondMagicUse"));
 				state = 5;
 			}
 			break;
 
-		case 5://Minigame start
+		case 5://Used Magic twice (minigame start)
 			if (!inDialog) {
-				StartCoroutine (ShowDialog ("OnMinigameStartCutsceneExit"));
+				bugImg.enabled = false;
+				StartCoroutine (PlayCutscene ("MinigameStart"));
 				state = 6;
 			}
 			break;
 
-		case 6://Used Flashlight
+		case 6://Minigame start
+			if (!inDialog) {
+				StartCoroutine (ShowDialog ("OnMinigameStartCutsceneExit"));
+				state = 7;
+			}
+			break;
+
+		case 7://Used Flashlight
 			if (pageImages.OnPage (84)) {
 				left.enabled = false;
 				right.enabled = false;
@@ -89,7 +110,7 @@ public class MinigameControl : MonoBehaviour {
 			}
 			if (!inDialog && controls.isSpotlight) {
 				StartCoroutine (ShowDialog ("OnUsedFlashlight"));
-				state = 7;
+				state = 8;
 			}
 			break;
 
@@ -114,8 +135,20 @@ public class MinigameControl : MonoBehaviour {
 			string name = lines [i].Substring (0, lines [i].IndexOf (":"));
 			string image = lines [i].Substring (lines [i].IndexOf (":")+1,lines [i].IndexOf("\n") - lines [i].IndexOf (":") - 1);
 			string text = lines [i].Substring (lines [i].IndexOf ("\n") + 1);
-			yield return StartCoroutine(cutsceneDialog.ShowDialog (Resources.Load<Sprite> ("Portraits/" + image),text));
-			yield return new WaitForSeconds (0.5f);
+
+			done = false;
+			result = false;
+			StartCoroutine (HandleDialogEvent(name,image,text,i));
+			yield return new WaitUntil (() => done);
+
+			if (!result) {
+				yield return new WaitForSeconds (0.1f);
+				yield return StartCoroutine (cutsceneDialog.ShowDialog (Resources.Load<Sprite> ("Portraits/" + image), text));
+				yield return new WaitForSeconds (0.4f);
+			} else {
+				i = newI;
+				yield return new WaitForSeconds (0.1f);
+			}
 		}
 		StartCoroutine(MusicControl.controller.ChangeSong(MusicControl.controller.MINIGAME_MUSIC));
 		yield return StartCoroutine(theatre.LeavePopupTheatre());
@@ -123,7 +156,7 @@ public class MinigameControl : MonoBehaviour {
 		controls.changeSelected (tool);
 		inDialog = false;
 	}
-
+		
 	private IEnumerator ShowDialog(string dialog){
 		int tool = controls.getSelected ();
 		inDialog = true;
@@ -137,13 +170,61 @@ public class MinigameControl : MonoBehaviour {
 			string name = lines [i].Substring (0, lines [i].IndexOf (":"));
 			string image = lines [i].Substring (lines [i].IndexOf (":")+1,lines [i].IndexOf("\n") - lines [i].IndexOf (":") - 1);
 			string text = lines [i].Substring (lines [i].IndexOf ("\n") + 1);
-			yield return new WaitForSeconds (0.1f);
-			yield return StartCoroutine(cutsceneDialog.ShowDialog (Resources.Load<Sprite> ("Portraits/" + image),text));
-			yield return new WaitForSeconds (0.4f);
+
+			done = false;
+			result = false;
+			StartCoroutine (HandleDialogEvent(name,image,text,i));
+			yield return new WaitUntil (() => done);
+
+			if (!result) {
+				yield return new WaitForSeconds (0.1f);
+				yield return StartCoroutine (cutsceneDialog.ShowDialog (Resources.Load<Sprite> ("Portraits/" + image), text));
+				yield return new WaitForSeconds (0.4f);
+			} else {
+				i = newI;
+				yield return new WaitForSeconds (0.1f);
+			}
 		}
 		controls.setLocked (false);
 		if (tool == ButtonControls.HAND_TOOL || tool == ButtonControls.SELECTION_TOOL)
 		    controls.changeSelected (tool);
 		inDialog = false;
+	}
+
+	private IEnumerator HandleDialogEvent(string name, string args, string dialog, int i)
+	{
+		newI = i;
+		if (name.Equals ("Lock Book")) {
+			bool lockBook = System.Boolean.Parse (args.Trim ());
+			left.enabled = !lockBook;
+			right.enabled = !lockBook;
+			leftLock.enabled = lockBook;
+			rightLock.enabled = lockBook;
+			yield return new WaitForSeconds (0.1f);
+			result = true;
+			done = true;
+			yield return true;
+		} else if (name.Equals ("Choice")) {
+			string[] choices = args.Split (new char[] {','});
+			int yesChoice = System.Int32.Parse (choices [0].Trim()) - 1;
+			int noChoice = System.Int32.Parse (choices [1].Trim()) - 1;
+			YesNoDialog.dialog = yesNoDialog;
+			yield return StartCoroutine (YesNoDialog.ShowDialog (dialog));
+
+			if (YesNoDialog.Choice()) {
+				newI = yesChoice;
+			} else {
+				newI = noChoice;
+			}
+			yield return new WaitForSeconds (0.1f);
+			result = true;
+			done = true;
+			yield return true;
+		}
+			
+		result = false;
+		done = true;
+		yield return false;
+
 	}
 }
