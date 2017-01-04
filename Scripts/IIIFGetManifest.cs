@@ -26,7 +26,7 @@ namespace AssemblyCSharp
 		/// <param name="url">The URL to download the IIIF manifest from.</param>
 		public void download(string url)
 		{
-			string manifest = client.DownloadString (url);
+			string manifest = "";//client.DownloadString (url);
 			pages = regex.Matches (manifest);
 		}
 

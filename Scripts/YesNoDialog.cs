@@ -11,7 +11,7 @@ public class YesNoDialog : MonoBehaviour
 	private bool choice;
 
 	// Use this for initialization
-	void Start ()
+	void  OnLevelWasLoaded ()
 	{
 		if (dialog != null)
 			dialog = this;

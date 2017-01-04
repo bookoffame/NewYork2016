@@ -212,7 +212,6 @@ public class ButtonControls : MonoBehaviour {
 		switch (newSelected) {
 		case LIGHT_TOOL:
 			isSpotlight = !isSpotlight;
-			spotlight.hideProperties (!isSpotlight);
 			if (isSpotlight)
 				images [newSelected].color = new Color (1, 1, 1, 1);
 			else

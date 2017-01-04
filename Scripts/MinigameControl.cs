@@ -13,7 +13,8 @@ public class MinigameControl : MonoBehaviour {
 	public Bug bug;
 	public SpriteRenderer leftLock, rightLock,bugImg;
 	public YesNoDialog yesNoDialog;
-
+	public GameObject letters;
+	public ParticleSystem letterEffect;
 
 	private int state, frameCount;
 	private bool inDialog;
@@ -114,6 +115,13 @@ public class MinigameControl : MonoBehaviour {
 			}
 			break;
 
+		case 8://Finding letters
+			if (!inDialog && letters.transform.childCount == 0 && bug.IsShowing () && Input.GetMouseButtonDown (0)) {
+				StartCoroutine (PlayCutscene ("MinigameEnd"));
+				state = 9;
+			}
+			break;
+
 		default:
 			break;
 			
@@ -204,18 +212,52 @@ public class MinigameControl : MonoBehaviour {
 			result = true;
 			done = true;
 			yield return true;
+		} else if (name.Equals ("Show Letters")) {
+			
+			yield return new WaitForSeconds (0.1f);
+			letterEffect.Play ();
+			letters.SetActive (true);
+			result = true;
+			done = true;
+			yield return true;
 		} else if (name.Equals ("Choice")) {
-			string[] choices = args.Split (new char[] {','});
-			int yesChoice = System.Int32.Parse (choices [0].Trim()) - 1;
-			int noChoice = System.Int32.Parse (choices [1].Trim()) - 1;
+			string[] choices = args.Split (new char[] { ',' });
+			int yesChoice = System.Int32.Parse (choices [0].Trim ()) - 1;
+			int noChoice = System.Int32.Parse (choices [1].Trim ()) - 1;
 			YesNoDialog.dialog = yesNoDialog;
+			dialog = dialog.Replace ("$i", InventoryBox.current.GetWord ());
 			yield return StartCoroutine (YesNoDialog.ShowDialog (dialog));
 
-			if (YesNoDialog.Choice()) {
+			if (YesNoDialog.Choice ()) {
 				newI = yesChoice;
 			} else {
 				newI = noChoice;
 			}
+			yield return new WaitForSeconds (0.1f);
+			result = true;
+			done = true;
+			yield return true;
+		} else if (name.Equals ("Check")) {
+			string[] choices = args.Split (new char[] { ',' });
+			int yesChoice = System.Int32.Parse (choices [0].Trim ()) - 1;
+			int noChoice = System.Int32.Parse (choices [1].Trim ()) - 1;
+			string answer = choices [2];
+
+			if (answer.Equals(InventoryBox.current.GetWord())) {
+				newI = yesChoice;
+			} else {
+				newI = noChoice;
+			}
+
+			yield return new WaitForSeconds (0.1f);
+			result = true;
+			done = true;
+			yield return true;
+		}
+		else if (name.Equals ("Inventory")) {
+			InventoryBox.current.text.text = dialog;
+			InventoryBox.current.Show();
+			yield return new WaitWhile (() => InventoryBox.current.gameObject.activeInHierarchy);
 			yield return new WaitForSeconds (0.1f);
 			result = true;
 			done = true;

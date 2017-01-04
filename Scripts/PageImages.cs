@@ -69,7 +69,7 @@ public class PageImages : MonoBehaviour {
 		pages [4].material.mainTexture = buffer.GetImage(4,true);
 		pages [5].material.mainTexture = buffer.GetImage(5,false);
 		transcription = Resources.Load<TextAsset> ("Transcriptions/anno").text;
-		GotoPage (71/*83*/);
+		GotoPage (83);
 		yield return new WaitUntil(()=>true);
 	}
 

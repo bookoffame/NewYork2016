@@ -74,6 +74,9 @@ Listen: I don't want to waste time on this worm either, but what other option do
 Choice:22,20
 Will you play the Queen's game?
 
+Show Letters:true
+//Letters fly behind the Queen
+
 Worm Queen:WormQueenA
 Good. Perhaps there is hope for you yet. Let the game begin!
 
