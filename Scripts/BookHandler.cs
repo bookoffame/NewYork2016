@@ -13,7 +13,7 @@ public class BookHandler : MonoBehaviour {
 	/// <summary>
 	/// The pages of the book.
 	/// </summary>
-	public GameObject pages;
+	public GameObject[] pages;
 
 	/// <summary>
 	/// The Colliders for the front and back covers of the book.
@@ -25,6 +25,8 @@ public class BookHandler : MonoBehaviour {
 	/// </summary>
 	public UIPopUp myUI;
 
+	public AudioSource sound;
+
 	void Update () {
 		RaycastHit hit;
 		bool isHit = false;
@@ -33,17 +35,21 @@ public class BookHandler : MonoBehaviour {
 				if (!isHit && model.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit, 1000)) {
 					if (Input.GetMouseButtonDown (0)) {
 						animator.SetTrigger ("Grabbed");
+						sound.Play ();
+						ButtonControls.current.changeSelected (ButtonControls.HAND_TOOL);
 					}
 				}
 			}
 		}
 
 		if (animator.GetCurrentAnimatorStateInfo (0).IsName ("Opened")) {
-			pages.SetActive (true);
+			foreach (GameObject page in pages)
+			    page.SetActive (true);
 		}
 
 		else if (animator.GetCurrentAnimatorStateInfo (0).IsName ("CloseState")) {
-			pages.SetActive (false);
+			foreach (GameObject page in pages)
+				page.SetActive (false);
 		}
 	}
 }

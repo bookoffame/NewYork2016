@@ -9,16 +9,20 @@ public class MoveMinigameLens : MonoBehaviour
 	/// </summary>
 	public Image lensImg;
 
-	/// <summary>
-	/// The image of the mask.
-	/// </summary>
-	public Image maskImg;
+	private Bug myBug;
 
 	void Update () {
 		lensImg.enabled = ButtonControls.current.getSelected () == ButtonControls.MINI_GAME_LENS_TOOL;
-		maskImg.enabled = ButtonControls.current.getSelected () == ButtonControls.MINI_GAME_LENS_TOOL;
-		transform.GetChild (0).gameObject.SetActive (ButtonControls.current.getSelected () == ButtonControls.MINI_GAME_LENS_TOOL);
 		transform.position = Input.mousePosition;
+		Ray r = Camera.main.ScreenPointToRay (Input.mousePosition);
+		RaycastHit[] hits = Physics.RaycastAll (r);
+
+		foreach (RaycastHit info in hits) {
+			myBug = info.collider.gameObject.GetComponent<Bug> ();
+			if (myBug) {
+				myBug.Show ();
+			}
+		}
 	}
 }
 

@@ -48,7 +48,6 @@ public class PageImages : MonoBehaviour {
 
 	private ArrayList annotations;
 	private int curr;
-	private bool loadingRight, loadingLeft;
 	private string transcription;
 
 	// Use this for initialization
@@ -62,23 +61,35 @@ public class PageImages : MonoBehaviour {
 	{
 		for (int i = 0; i < 6; i++) {
 			pages [i].enabled = true;
-			pages [i].material.mainTexture = buffer.GetImage(i);
 		}
-		curr = 73;
-		annotation [0].UpdateWebAddress (iiifImage.removeTail(buffer.GetURL(curr*2 - 1)));
-		annotation [1].UpdateWebAddress (iiifImage.removeTail(buffer.GetURL(curr*2)));
+		pages [0].material.mainTexture = buffer.GetImage(0,true);
+		pages [1].material.mainTexture = buffer.GetImage(1,false);
+		pages [2].material.mainTexture = buffer.GetImage(2,true);
+		pages [3].material.mainTexture = buffer.GetImage(3,false);
+		pages [4].material.mainTexture = buffer.GetImage(4,true);
+		pages [5].material.mainTexture = buffer.GetImage(5,false);
 		transcription = Resources.Load<TextAsset> ("Transcriptions/anno").text;
-		UpdateAnnotations ();
-		UpdatePageDisplay ();
-		loadingLeft = false;
-		loadingRight = false;
+		GotoPage (71/*83*/);
 		yield return new WaitUntil(()=>true);
 	}
 
 	void Update(){
-		for (int i = 0; i < 6; i++) {
-			pages [i].material.mainTexture = buffer.GetImage(i);
-		}
+		pages [0].material.mainTexture = buffer.GetImage(0,true);
+		pages [1].material.mainTexture = buffer.GetImage(1,false);
+		pages [2].material.mainTexture = buffer.GetImage(2,true);
+		pages [3].material.mainTexture = buffer.GetImage(3,false);
+		pages [4].material.mainTexture = buffer.GetImage(4,true);
+		pages [5].material.mainTexture = buffer.GetImage(5,false);
+	}
+
+	public bool OnPage(int pageNum){
+		return curr - 2 == pageNum;
+	}
+
+	public void GotoPage(int pageNum){
+		buffer.GotoPage (pageNum);
+		curr = pageNum + 1;
+		StartCoroutine (TurnPageLeft ());
 	}
 
 	/// <summary>
@@ -106,19 +117,7 @@ public class PageImages : MonoBehaviour {
 		UpdatePageDisplay ();
 		yield return new WaitUntil (() => true);
 	}
-
-	/// <summary>
-	/// Determines whether this instance is loading left pages.
-	/// </summary>
-	/// <returns><c>true</c> if this instance is loading left pages; otherwise, <c>false</c>.</returns>
-	public bool IsLoadingLeft(){return false;}
-
-	/// <summary>
-	/// Determines whether this instance is loading right pages.
-	/// </summary>
-	/// <returns><c>true</c> if this instance is loading right pages; otherwise, <c>false</c>.</returns>
-	public bool IsLoadingRight(){return false;}
-
+		
 	/// <summary>
 	/// Shows/Hides the annotations.
 	/// </summary>

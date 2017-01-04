@@ -153,13 +153,16 @@ public class ButtonControls : MonoBehaviour {
 	/// </summary>
 	public const int TWITTER_TOOL = 9;
 
+	private bool locked;
+
 	// Use this for initialization
 	void Start () {
-		selected = -1;
+		locked = false;
 		for (int i = 0; i < buttons.Length; i++)
 			buttons [i].image.color = Color.cyan;
 		for (int i = 0; i < images.Length; i++)
 			images [i].color = new Color (0.3f,0.3f,0.3f,1);
+		changeSelected(SELECTION_TOOL);
 		current = this;
 		tweetRegex = new Regex ("<div class=\"js-tweet-text-container\">\\s*?<p class=\"TweetTextSize TweetTextSize--16px js-tweet-text tweet-text\" lang=\"en\" data-aria-label-part=\"0\">(.*?)<\\/p>\\s*?<\\/div>");
 	}
@@ -204,6 +207,8 @@ public class ButtonControls : MonoBehaviour {
 	/// </summary>
 	/// <param name="newSelected">The tool to select.</param>
 	public void changeSelected(int newSelected){
+		if (locked)
+			return;
 		switch (newSelected) {
 		case LIGHT_TOOL:
 			isSpotlight = !isSpotlight;
@@ -288,6 +293,10 @@ public class ButtonControls : MonoBehaviour {
 		yield return new WaitForSeconds (5);
 		twitterBird.sprite = twitterBirdClosed;
 		tweetBox.SetActive (false);
+	}
+
+	public void setLocked(bool isLocked){
+		locked = isLocked;
 	}
 
 	private void clearLast()
