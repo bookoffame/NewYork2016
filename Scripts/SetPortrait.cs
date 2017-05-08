@@ -2,23 +2,27 @@
 using System.Collections;
 
 public class SetPortrait : MonoBehaviour {
-	private Animator animator;
+	public Animator animator;
 	private Transform active;
 
 	// Use this for initialization
 	void Start () {
 		active = null;
-		animator = this.transform.GetComponent<Animator>();
 	}
 
 	public void SetImage(string name) {
 		Transform toSet = this.transform.Find (name);
 		if (toSet != null) {
-			if (active != null) {
-				active.gameObject.SetActive (false);
-			}
+			HideLast ();
 			toSet.gameObject.SetActive (true);
 			active = toSet;
+		}
+	}
+
+	public void HideLast()
+	{
+		if (active != null) {
+			active.gameObject.SetActive (false);
 		}
 	}
 

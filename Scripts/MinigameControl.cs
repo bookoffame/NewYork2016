@@ -11,7 +11,8 @@ public class MinigameControl : MonoBehaviour {
 	public ButtonControls controls;
 	public HandOnPage left, right;
 	public Bug bug;
-	public SpriteRenderer leftLock, rightLock,bugImg;
+	public SpriteRenderer bugImg;
+	public SpriteRenderer[] leftLocks, rightLocks;
 	public YesNoDialog yesNoDialog;
 	public GameObject letters;
 	public ParticleSystem letterEffect;
@@ -101,13 +102,17 @@ public class MinigameControl : MonoBehaviour {
 			if (pageImages.OnPage (84)) {
 				left.enabled = false;
 				right.enabled = false;
-				leftLock.enabled = true;
-				rightLock.enabled = true;
+				foreach (SpriteRenderer leftLock in leftLocks)
+					leftLock.enabled = true;
+				foreach (SpriteRenderer rightLock in rightLocks)
+					rightLock.enabled = true;
 			} else {
 				left.enabled = true;
 				right.enabled = true;
-				leftLock.enabled = false;
-				rightLock.enabled = false;
+				foreach (SpriteRenderer leftLock in leftLocks)
+					leftLock.enabled = false;
+				foreach (SpriteRenderer rightLock in rightLocks)
+					rightLock.enabled = false;
 			}
 			if (!inDialog && controls.isSpotlight) {
 				StartCoroutine (ShowDialog ("OnUsedFlashlight"));
@@ -152,7 +157,7 @@ public class MinigameControl : MonoBehaviour {
 
 			if (!result) {
 				yield return new WaitForSeconds (0.1f);
-				yield return StartCoroutine (cutsceneDialog.ShowDialog (image, text));
+				yield return StartCoroutine (cutsceneDialog.ShowDialog (image, text, animation));
 				yield return new WaitForSeconds (0.4f);
 			} else {
 				i = newI;
@@ -162,6 +167,7 @@ public class MinigameControl : MonoBehaviour {
 		StartCoroutine(MusicControl.controller.ChangeSong(MusicControl.controller.MINIGAME_MUSIC));
 		yield return StartCoroutine(theatre.LeavePopupTheatre());
 		controls.setLocked (false);
+		cutsceneDialog.EndCutscene ();
 		controls.changeSelected (tool);
 		inDialog = false;
 	}
@@ -188,7 +194,7 @@ public class MinigameControl : MonoBehaviour {
 
 			if (!result) {
 				yield return new WaitForSeconds (0.1f);
-				yield return StartCoroutine (cutsceneDialog.ShowDialog (image, text));
+				yield return StartCoroutine (cutsceneDialog.ShowDialog (image, text, animation));
 				yield return new WaitForSeconds (0.4f);
 			} else {
 				i = newI;
@@ -196,6 +202,7 @@ public class MinigameControl : MonoBehaviour {
 			}
 		}
 		controls.setLocked (false);
+		cutsceneDialog.EndCutscene ();
 		if (tool == ButtonControls.HAND_TOOL || tool == ButtonControls.SELECTION_TOOL)
 		    controls.changeSelected (tool);
 		inDialog = false;
@@ -208,8 +215,10 @@ public class MinigameControl : MonoBehaviour {
 			bool lockBook = System.Boolean.Parse (args.Trim ());
 			left.enabled = !lockBook;
 			right.enabled = !lockBook;
-			leftLock.enabled = lockBook;
-			rightLock.enabled = lockBook;
+			foreach (SpriteRenderer leftLock in leftLocks)
+			    leftLock.enabled = lockBook;
+			foreach (SpriteRenderer rightLock in rightLocks)
+			    rightLock.enabled = lockBook;
 			yield return new WaitForSeconds (0.1f);
 			result = true;
 			done = true;

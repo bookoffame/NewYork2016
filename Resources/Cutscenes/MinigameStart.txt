@@ -34,7 +34,7 @@ Worm Queen:WormQueenA>Default Left
 Ugh, fine then, not death. But don't think you're off the hook just yet! I have a
 game in mind from which there is no escape. Minions: secure the realm!
 
-Lock Book:true
+Lock Book:true>
 //Worms appears on book
 
 Worm Queen:WormQueenA>Default Left
@@ -65,16 +65,16 @@ realm for the word that will buy your freedom, if you return to this courtroom a
 your time is up. Of course, should you fail to find this word, well... I can assure you, your time
 will be up. What sayst thou?
 
-Choice:22,20
+Choice:22,20>
 Will you play the Queen's game?
 
 Eagle:GoldenEagleB>Default Left
 Listen: I don't want to waste time on this worm either, but what other option do you have?
 
-Choice:22,20
+Choice:22,20>
 Will you play the Queen's game?
 
-Show Letters:true
+Show Letters:true>
 //Letters fly behind the Queen
 
 Worm Queen:WormQueenA>Default Left

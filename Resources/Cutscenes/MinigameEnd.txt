@@ -4,16 +4,16 @@ day, but it remains to be seen whether you will keep your life. Before all the n
 and widows of my realm, and before me as judge, give your answer: what do women desire
 most?
 
-Choice:2,3
+Choice:2,3>
 Do you respond "$i"?
 
-Check:9,5,S-O-V-E-R-E-N-I-T-E
+Check:9,5,S-O-V-E-R-E-N-I-T-E>
 //Check if response was correct
 
-Inventory:Open
+Inventory:Open>
 What is it, friend? Would you like to consult the inventory screen again?
 
-Choice:2,3
+Choice:2,3>
 Do you respond "$i"?
 
 Worm Queen:WormQueenB>Default Left
@@ -22,10 +22,10 @@ Eh, what nonsense is this?
 Eagle:GoldenEagleA>Default Left
 Apologies, your highness. My client is merely nervous. Another moment please.
 
-Inventory:Open
+Inventory:Open>
 Chin up, friend! This is no time to be getting cold feet!
 
-Choice:2,3
+Choice:2,3>
 Do you respond "$i"?
 
 Worm Queen:WormQueenC>Default Left

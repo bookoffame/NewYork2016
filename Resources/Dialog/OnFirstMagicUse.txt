@@ -1,4 +1,4 @@
-﻿Worm:WormA>Default Left
+﻿Worm:WormA>Pop Up From Left
 Oi, you der'! Knock it off! Can't you see weez got a courtroom runnin' here?
 
 Eagle:GoldenEagleD-1>Default Left

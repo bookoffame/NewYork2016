@@ -1,7 +1,7 @@
-﻿Worm:WormA>Default Left
+﻿Worm:WormA>Pop Up From Left
 WHAT? You again?! Can't you just leave well enough alone? Why I oughtta...
 
-Worm Queen:WormQueenB>Default Left
+Worm Queen:WormQueenB>Come From Right
 SILENCE IN MY COURTROOM!
 
 Worm:WormB>Default Left
