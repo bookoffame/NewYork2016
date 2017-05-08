@@ -141,7 +141,8 @@ public class MinigameControl : MonoBehaviour {
 
 		for (int i = 0; i < lines.Length; i++) {
 			string name = lines [i].Substring (0, lines [i].IndexOf (":"));
-			string image = lines [i].Substring (lines [i].IndexOf (":")+1,lines [i].IndexOf("\n") - lines [i].IndexOf (":") - 1);
+			string image = lines [i].Substring (lines [i].IndexOf (":")+1,lines [i].IndexOf(">") - lines [i].IndexOf (":") - 1);
+			string animation = lines [i].Substring (lines [i].IndexOf (">")+1,lines [i].IndexOf("\n") - lines [i].IndexOf (">") - 1);
 			string text = lines [i].Substring (lines [i].IndexOf ("\n") + 1);
 
 			done = false;
@@ -151,7 +152,7 @@ public class MinigameControl : MonoBehaviour {
 
 			if (!result) {
 				yield return new WaitForSeconds (0.1f);
-				yield return StartCoroutine (cutsceneDialog.ShowDialog (Resources.Load<Sprite> ("Portraits/" + image), text));
+				yield return StartCoroutine (cutsceneDialog.ShowDialog (image, text));
 				yield return new WaitForSeconds (0.4f);
 			} else {
 				i = newI;
@@ -176,7 +177,8 @@ public class MinigameControl : MonoBehaviour {
 
 		for (int i = 0; i < lines.Length; i++) {
 			string name = lines [i].Substring (0, lines [i].IndexOf (":"));
-			string image = lines [i].Substring (lines [i].IndexOf (":")+1,lines [i].IndexOf("\n") - lines [i].IndexOf (":") - 1);
+			string image = lines [i].Substring (lines [i].IndexOf (":")+1,lines [i].IndexOf(">") - lines [i].IndexOf (":") - 1);
+			string animation = lines [i].Substring (lines [i].IndexOf (">")+1,lines [i].IndexOf("\n") - lines [i].IndexOf (">") - 1);
 			string text = lines [i].Substring (lines [i].IndexOf ("\n") + 1);
 
 			done = false;
@@ -186,7 +188,7 @@ public class MinigameControl : MonoBehaviour {
 
 			if (!result) {
 				yield return new WaitForSeconds (0.1f);
-				yield return StartCoroutine (cutsceneDialog.ShowDialog (Resources.Load<Sprite> ("Portraits/" + image), text));
+				yield return StartCoroutine (cutsceneDialog.ShowDialog (image, text));
 				yield return new WaitForSeconds (0.4f);
 			} else {
 				i = newI;

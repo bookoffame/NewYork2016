@@ -1,8 +1,8 @@
-﻿Worm:WormA
+﻿Worm:WormA>Default Left
 WHAT? You again?! Can't you just leave well enough alone? Why I oughtta...
 
-Worm Queen:WormQueenB
+Worm Queen:WormQueenB>Default Left
 SILENCE IN MY COURTROOM!
 
-Worm:WormB
+Worm:WormB>Default Left
 Oh jeez, now youz gone upset the Queen. Don't say I din't warn ya!

@@ -74,7 +74,12 @@ public class IIIFImageGet : ScriptableObject {
 	public IEnumerator UpdateImage () {
 		string location = getAddress ();
 		iiifImage = new WWW (location);
-		yield return new WaitUntil(() => iiifImage.isDone);
+		do 
+		{
+			yield return new WaitUntil (() => iiifImage.isDone);
+			yield return new WaitForSeconds(1);
+		} while(!string.IsNullOrEmpty(iiifImage.error));
+
 		texture = iiifImage.texture;
 	}
 

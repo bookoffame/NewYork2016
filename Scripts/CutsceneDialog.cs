@@ -4,20 +4,20 @@ using System.Collections;
 
 public class CutsceneDialog : MonoBehaviour {
 
-	public Image portrait;
+	public SetPortrait portrait;
 	public Image scroll;
 	public Text text;
+	private const int MAX_DIALOG_LENGTH = 250;
 
-	public IEnumerator ShowDialog(Sprite character, string dialog){
-		portrait.sprite = character;
+	public IEnumerator ShowDialog(string character, string dialog){
 		portrait.gameObject.SetActive (true);
+		portrait.SetImage(character);
 		scroll.gameObject.SetActive (true);
 		text.gameObject.SetActive (true);
-		string[] lines = dialog.Split(new char[]{'\n'});
-		for (int i = 0; i < (lines.Length + 2) / 3; i++) {
-			text.text = GetStringIfExists (lines, i * 3) + "\n" +
-			            GetStringIfExists (lines, i * 3 + 1) + "\n" +
-			            GetStringIfExists (lines, i * 3 + 2);
+		dialog = dialog.Replace ('\n', ' ');
+
+		for (int i = 0, end = GetEnd(dialog, i); i < dialog.Length; i = end, end = GetEnd(dialog, i)) {
+			text.text = dialog.Substring (i, end - i);
 			yield return new WaitUntil (() => Input.GetMouseButtonDown(0));
 			yield return new WaitForSeconds (0.1f);
 		}
@@ -26,10 +26,17 @@ public class CutsceneDialog : MonoBehaviour {
 		text.gameObject.SetActive (false);
 	}
 
-	private string GetStringIfExists(string[] arr, int index){
-		if (index >= arr.Length)
-			return "";
-		else
-			return arr [index];
+	private int GetEnd(string dialog, int index){
+		int lastWordEnd = index;
+		int lastLastWordEnd = lastWordEnd;
+
+		while (lastWordEnd - index < MAX_DIALOG_LENGTH && lastWordEnd < dialog.Length) {
+			lastLastWordEnd = lastWordEnd;
+			lastWordEnd = dialog.IndexOf (' ', lastWordEnd + 1);
+			if (lastWordEnd == -1) {
+				return dialog.Length;
+			}
+		}
+		return lastLastWordEnd;
 	}
 }
